@@ -1,0 +1,38 @@
+/* ── Filters Variant ── */
+
+@layer components {
+  .filters {
+    background-color: var(--color-surface);
+    border-bottom-color: var(--color-border);
+  }
+
+  .filters__group label {
+    color: var(--color-text);
+    font-weight: var(--weight-medium);
+  }
+
+  .filters__select {
+    border-color: var(--color-border);
+    color: var(--color-text);
+    background-color: var(--color-surface);
+  }
+
+  .filters__select:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px hsl(var(--color-accent-h), var(--color-accent-s), var(--color-accent-l), 0.2);
+  }
+
+  .filters__btn--active {
+    background-color: var(--color-primary);
+    color: var(--color-primary-fg);
+    border-color: var(--color-primary);
+  }
+
+  .filters__range {
+    border-color: var(--color-border);
+  }
+
+  .filters__range:focus {
+    border-color: var(--color-accent);
+  }
+}

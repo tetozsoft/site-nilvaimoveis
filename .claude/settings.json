@@ -1,0 +1,35 @@
+{
+  "hooks": {
+    "SubagentStop": [
+      {
+        "matcher": "designer",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[WORKFLOW] Designer concluido. Proximo passo OBRIGATORIO: executar o agente reviewer para auditar as mudancas CSS.'"
+          }
+        ]
+      },
+      {
+        "matcher": "reviewer",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[WORKFLOW] Reviewer concluido. Pipeline COMPLETO. A task pode ser finalizada.'"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Verifique o transcript desta sessao. Se houve mudancas em arquivos CSS (Edit ou Write em arquivos .css), confirme que os 2 agentes do pipeline foram executados na ordem: designer, reviewer. Se algum agente foi pulado, responda NAO. Se nenhum arquivo CSS foi editado (apenas leitura/conversa), ou se ambos os agentes rodaram, responda SIM.",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

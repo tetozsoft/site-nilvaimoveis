@@ -1,0 +1,15 @@
+/* ── Card Base Variant ── */
+
+@layer components {
+  .card {
+    background-color: var(--color-surface);
+    border-radius: var(--radius-2xl);
+    overflow: hidden;
+    transition: var(--transition-all);
+    box-shadow: var(--shadow-card);
+  }
+
+  .card:hover {
+    box-shadow: var(--shadow-hover);
+  }
+}

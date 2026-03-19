@@ -1,0 +1,11 @@
+/* ── About / Section Variant ── */
+
+@layer components {
+  .section__title {
+    font-family: var(--font-heading);
+  }
+
+  .section__highlight {
+    color: var(--color-accent);
+  }
+}

@@ -1,0 +1,24 @@
+/* ── Theme Barrel ──
+   Import order matters: tokens first, then typography, then variants.
+   ─────────────────────────────────────────────────────────────────── */
+
+@import "./tokens.css";
+@import "./typography.css";
+@import "./animations.css";
+@import "./overrides.css";
+
+/* ── Variants ── */
+@import "./variants/button.css";
+@import "./variants/card.css";
+@import "./variants/badge.css";
+@import "./variants/header.css";
+@import "./variants/footer.css";
+@import "./variants/hero.css";
+@import "./variants/property-card.css";
+@import "./variants/property-grid.css";
+@import "./variants/filters.css";
+@import "./variants/gallery.css";
+@import "./variants/contact.css";
+@import "./variants/testimonials.css";
+@import "./variants/services.css";
+@import "./variants/about.css";

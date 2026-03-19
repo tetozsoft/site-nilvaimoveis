@@ -1,0 +1,11 @@
+/* ── Badge Variants ── */
+
+@layer components {
+  .badge--featured {
+    background-color: var(--color-accent);
+    color: var(--color-accent-fg);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    border-radius: var(--radius-full);
+  }
+}

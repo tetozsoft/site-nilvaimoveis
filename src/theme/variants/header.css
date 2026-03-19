@@ -1,0 +1,30 @@
+/* ── Header Variant ── */
+
+@layer components {
+  .site-header {
+    background-color: hsl(var(--color-bg-h), var(--color-bg-s), var(--color-bg-l), 0.95);
+    border-bottom-color: var(--color-border);
+  }
+
+  .site-nav__link {
+    color: var(--color-text-muted);
+    transition: var(--transition-colors);
+  }
+
+  .site-nav__link:hover {
+    color: var(--color-text);
+  }
+
+  .mobile-nav {
+    border-top-color: var(--color-border);
+  }
+
+  .mobile-nav a {
+    color: var(--color-text);
+    transition: var(--transition-colors);
+  }
+
+  .mobile-nav a:hover {
+    color: var(--color-accent);
+  }
+}

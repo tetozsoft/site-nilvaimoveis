@@ -1,0 +1,53 @@
+/* ── Property Card Variant ── */
+
+@layer components {
+  .property-card {
+    background-color: var(--color-surface);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: var(--transition-all);
+    transition-duration: var(--duration-slow);
+    box-shadow: var(--shadow-card);
+  }
+
+  .property-card:hover {
+    transform: translateY(-0.5rem);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .property-card__image img {
+    transition: var(--transition-transform);
+  }
+
+  .property-card:hover .property-card__image img {
+    transform: scale(1.1);
+  }
+
+  .property-card__badge {
+    background-color: var(--color-accent);
+    color: var(--color-accent-fg);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    border-radius: var(--radius-full);
+  }
+
+  .property-card__title {
+    font-family: var(--font-heading);
+    color: var(--color-text);
+    transition: var(--transition-colors);
+  }
+
+  .property-card:hover .property-card__title {
+    color: var(--color-accent);
+  }
+
+  .property-card__price {
+    font-weight: var(--weight-bold);
+    color: var(--color-text);
+  }
+
+  .property-card__meta {
+    color: var(--color-text-muted);
+    border-bottom-color: var(--color-border);
+  }
+}

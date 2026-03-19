@@ -1,0 +1,18 @@
+/* ── Testimonials Variant ── */
+
+@layer components {
+  .testimonials-section {
+    background-color: var(--color-secondary);
+  }
+
+  .testimonial-card {
+    background-color: var(--color-surface);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-elegant);
+    transition: box-shadow var(--duration-base) var(--ease-default);
+  }
+
+  .testimonial-card:hover {
+    box-shadow: var(--shadow-hover);
+  }
+}

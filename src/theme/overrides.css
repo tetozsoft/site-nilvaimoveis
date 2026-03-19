@@ -1,0 +1,27 @@
+/* ── Global Overrides ──
+   Scrollbar, selection, focus rings using tokens.
+   ─────────────────────────────────────────────── */
+
+::selection {
+  background-color: var(--color-accent);
+  color: var(--color-accent-fg);
+}
+
+/* ── Scrollbar (webkit) ── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}

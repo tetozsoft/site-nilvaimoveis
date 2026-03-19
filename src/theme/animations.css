@@ -1,0 +1,42 @@
+/* ── Animations ──
+   Keyframes and animation preset variables.
+   ─────────────────────────────────────── */
+
+:root {
+  --anim-fade-up-distance: 30px;
+  --anim-slide-in-distance: 20px;
+  --anim-duration-fade-up: 0.8s;
+  --anim-duration-fade-in: 0.6s;
+  --anim-duration-slide-in: 0.6s;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(var(--anim-fade-up-distance));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(calc(-1 * var(--anim-slide-in-distance)));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

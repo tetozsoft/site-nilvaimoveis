@@ -1,0 +1,8 @@
+/* ── Footer Variant ── */
+
+@layer components {
+  .site-footer {
+    background-color: var(--color-primary);
+    color: var(--color-primary-fg);
+  }
+}

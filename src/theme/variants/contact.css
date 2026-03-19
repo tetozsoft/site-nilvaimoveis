@@ -1,0 +1,36 @@
+/* ── Contact Variant ── */
+
+@layer components {
+  .contact-section {
+    background-color: var(--color-secondary);
+  }
+
+  .contact-form {
+    background-color: var(--color-surface);
+    border-color: var(--color-border);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-elegant);
+  }
+
+  .contact-form .input {
+    background-color: var(--color-secondary);
+    border-color: var(--color-border);
+    color: var(--color-text);
+    border-radius: var(--radius-lg);
+    transition: var(--transition-all);
+  }
+
+  .contact-form .input:focus {
+    border-color: transparent;
+    box-shadow: 0 0 0 2px hsl(var(--color-primary-h), var(--color-primary-s), var(--color-primary-l));
+  }
+
+  .contact-form .input::placeholder {
+    color: var(--color-text-muted);
+    opacity: 0.6;
+  }
+
+  .modal__overlay {
+    background-color: hsl(var(--color-primary-h), var(--color-primary-s), var(--color-primary-l), 0.5);
+  }
+}

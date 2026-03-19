@@ -1,0 +1,29 @@
+/* ── Hero Variant ── */
+
+@layer components {
+  .hero__overlay {
+    background: var(--hero-overlay);
+  }
+
+  .hero__title {
+    font-family: var(--font-heading);
+    color: var(--color-primary-fg);
+  }
+
+  .hero__subtitle {
+    color: hsl(0, 0%, 100%, 0.8);
+  }
+
+  .hero__stats {
+    color: var(--color-primary-fg);
+  }
+
+  .hero__stats .stat-value {
+    color: var(--color-accent);
+    font-family: var(--font-heading);
+  }
+
+  .hero__stats .stat-label {
+    color: hsl(0, 0%, 100%, 0.7);
+  }
+}

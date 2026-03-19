@@ -1,0 +1,32 @@
+/* ── Property Detail / Gallery Variant ── */
+
+@layer components {
+  .property-detail {
+    color: var(--color-text);
+  }
+
+  .property-gallery {
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+  }
+
+  .property-gallery img {
+    transition: var(--transition-transform);
+  }
+
+  .property-info h2 {
+    font-family: var(--font-heading);
+    color: var(--color-text);
+  }
+
+  .property-features {
+    background-color: var(--color-secondary);
+    border-radius: var(--radius-xl);
+  }
+
+  .property-agent {
+    background-color: var(--color-surface);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-card);
+  }
+}
