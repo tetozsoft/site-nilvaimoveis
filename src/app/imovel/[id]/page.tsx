@@ -3,6 +3,7 @@ import { fetchPropertyDetailServer, fetchConfigServer, fetchAllPropertySlugs } f
 import { formatCurrency } from "@/lib/utils";
 import { PropertyDetailsClient } from "./PropertyDetailsClient";
 
+export const runtime = 'edge';
 export const revalidate = 600; // ISR: revalidate every 10 minutes
 
 interface PageProps {
