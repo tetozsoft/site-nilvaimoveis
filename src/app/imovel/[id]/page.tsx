@@ -49,12 +49,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export async function generateStaticParams() {
+  // Always include "_" as a fallback page for new properties not yet built.
+  // The Cloudflare Pages Function serves this page when a static file doesn't exist.
+  const params = [{ id: "_" }];
   try {
     const slugs = await fetchAllPropertySlugs();
-    return slugs.map((slug) => ({ id: slug }));
+    for (const slug of slugs) params.push({ id: slug });
   } catch {
-    return [];
+    // CDN unavailable at build time
   }
+  return params;
 }
 
 export default async function PropertyDetailPage({ params }: PageProps) {

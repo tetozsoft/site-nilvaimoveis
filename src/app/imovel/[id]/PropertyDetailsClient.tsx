@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Bed, Bath, Car, Maximize, MapPin, ChevronLeft, ChevronRight, Phone, Mail, Share2, Heart, Check, Home, Building, Layers, Calendar, DollarSign, Handshake, Sofa, ArrowLeftRight, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
@@ -38,9 +39,28 @@ const ConditionBadge = ({ label, active }: { label: string; active: boolean }) =
   </div>
 );
 
-export function PropertyDetailsClient({ slug }: { slug: string }) {
+export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
   const siteConfig = useSiteConfigContext();
-  const { data: property, isPending, isFetching } = usePropertyDetail(slug);
+  const pathname = usePathname();
+  const [resolvedSlug, setResolvedSlug] = useState<string | undefined>(
+    propSlug === "_" ? undefined : propSlug
+  );
+
+  useEffect(() => {
+    if (propSlug === "_") {
+      const urlSlug = pathname.split("/").filter(Boolean).pop();
+      if (urlSlug && urlSlug !== "_") setResolvedSlug(urlSlug);
+    }
+  }, [propSlug, pathname]);
+
+  const { data: property, isPending, isFetching } = usePropertyDetail(resolvedSlug);
+
+  useEffect(() => {
+    if (propSlug === "_" && property) {
+      document.title = property.titulo;
+    }
+  }, [propSlug, property]);
+
   const [currentImage, setCurrentImage] = useState(0);
   const [formData, setFormData] = useState({ name: "", message: "" });
 
