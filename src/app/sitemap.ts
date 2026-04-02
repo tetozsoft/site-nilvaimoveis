@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 import { fetchAllPropertySlugs, fetchConfigServer } from "@/lib/cdn";
 
+export const dynamic = "force-static";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let baseUrl = "https://example.com";
 
