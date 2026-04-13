@@ -16,7 +16,7 @@
 
   .property-info h2 {
     font-family: var(--font-heading);
-    color: var(--color-text);
+    color: var(--color-heading);
   }
 
   .property-features {

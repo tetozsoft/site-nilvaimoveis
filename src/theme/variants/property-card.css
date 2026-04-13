@@ -33,7 +33,7 @@
 
   .property-card__title {
     font-family: var(--font-heading);
-    color: var(--color-text);
+    color: var(--color-heading);
     transition: var(--transition-colors);
   }
 

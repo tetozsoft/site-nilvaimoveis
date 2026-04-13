@@ -3,6 +3,7 @@
 @layer components {
   .section__title {
     font-family: var(--font-heading);
+    color: var(--color-heading);
   }
 
   .section__highlight {

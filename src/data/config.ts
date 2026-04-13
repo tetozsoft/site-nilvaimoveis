@@ -9,6 +9,9 @@ export interface SiteConfig {
   secondary_color: string;
   accent_color: string;
   background_color: string;
+  font_color?: string;
+  heading_color?: string;
+  footer_bg_color?: string;
   contact: {
     email: string;
     phone: string;
