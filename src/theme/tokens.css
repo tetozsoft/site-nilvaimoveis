@@ -35,9 +35,25 @@
   --color-accent-warm: hsl(45, 85%, 60%);
   --color-surface: var(--color-bg);
   --color-surface-raised: hsl(var(--color-bg-h), var(--color-bg-s), calc(var(--color-bg-l) - 2%));
-  --color-text: hsl(var(--color-primary-h), 20%, 15%);
-  --color-text-muted: hsl(var(--color-primary-h), 10%, 50%);
-  --color-border: hsl(var(--color-primary-h), 15%, 90%);
+  /* ── Text (overridable via CDN font_color, defaults to primary-hue derived) ── */
+  --color-text-h: var(--color-primary-h);
+  --color-text-s: 20%;
+  --color-text-l: 15%;
+  --color-text: hsl(var(--color-text-h) var(--color-text-s) var(--color-text-l));
+  --color-text-muted: hsl(var(--color-text-h) 10% 50%);
+  --color-border: hsl(var(--color-text-h) 15% 90%);
+
+  /* ── Heading (overridable via CDN heading_color, defaults to text color) ── */
+  --color-heading-h: var(--color-text-h);
+  --color-heading-s: var(--color-text-s);
+  --color-heading-l: var(--color-text-l);
+  --color-heading: hsl(var(--color-heading-h) var(--color-heading-s) var(--color-heading-l));
+
+  /* ── Footer Background (overridable via CDN footer_bg_color, defaults to primary) ── */
+  --color-footer-bg-h: var(--color-primary-h);
+  --color-footer-bg-s: var(--color-primary-s);
+  --color-footer-bg-l: var(--color-primary-l);
+  --color-footer-bg: hsl(var(--color-footer-bg-h) var(--color-footer-bg-s) var(--color-footer-bg-l));
 
   /* ── Foregrounds ── */
   --color-primary-fg: hsl(0, 0%, 100%);

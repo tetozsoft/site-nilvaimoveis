@@ -65,13 +65,19 @@ function useColorOverrides(config: SiteConfig | undefined) {
     const root = document.documentElement.style;
 
     // CDN naming → site token mapping:
-    //   CDN primary_color    → --color-primary (brand main color: header, footer, buttons)
+    //   CDN primary_color    → --color-primary (brand main color: header, buttons)
     //   CDN secondary_color  → --color-accent  (brand accent: gold CTAs, highlights)
+    //   CDN font_color       → --color-text    (body text, muted text, borders)
+    //   CDN heading_color    → --color-heading  (section titles, card titles)
+    //   CDN footer_bg_color  → --color-footer-bg (footer background)
     //   CDN accent_color     → (skipped — CDN sends white, not useful)
     //   CDN background_color → (skipped — keep white default for section contrast)
     const mapping: [string, string | undefined][] = [
       ["primary", config.primary_color],
       ["accent", config.secondary_color],
+      ["text", config.font_color],
+      ["heading", config.heading_color],
+      ["footer-bg", config.footer_bg_color],
     ];
 
     for (const [token, hex] of mapping) {
