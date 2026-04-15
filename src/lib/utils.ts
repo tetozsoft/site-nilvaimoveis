@@ -5,9 +5,11 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatCurrency(value: number | null | undefined): string {
+export function formatCurrency(value: number | string | null | undefined): string {
   if (value == null) return "";
-  return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 0 });
+  const num = typeof value === "string" ? Number(value) : value;
+  if (isNaN(num)) return "";
+  return num.toLocaleString("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 0 });
 }
 
 export function transactionTypeLabel(type: string): string {

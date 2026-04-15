@@ -3,6 +3,21 @@ import { fetchPropertyDetailServer, fetchConfigServer, fetchAllPropertySlugs } f
 import { formatCurrency } from "@/lib/utils";
 import { PropertyDetailsClient } from "./PropertyDetailsClient";
 
+export const dynamicParams = false;
+
+export async function generateStaticParams() {
+  // Always include "_" as a fallback page for new properties not yet built.
+  // The Cloudflare Pages Function serves this page when a static file doesn't exist.
+  const params = [{ id: "_" }];
+  try {
+    const slugs = await fetchAllPropertySlugs();
+    for (const slug of slugs) params.push({ id: slug });
+  } catch {
+    // CDN unavailable at build time
+  }
+  return params;
+}
+
 interface PageProps {
   params: Promise<{ id: string }>;
 }
@@ -29,7 +44,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         title,
         description,
         type: "website",
-        ...(ogImage && { images: [{ url: ogImage, width: 1200, height: 630 }] }),
+        url: `/imovel/${id}`,
+        ...(ogImage && { images: [{ url: ogImage, width: 1200, height: 630, alt: property.titulo }] }),
       },
       twitter: {
         card: "summary_large_image",
@@ -39,23 +55,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       },
     };
   } catch {
+    const config = await fetchConfigServer().catch(() => null);
+    const fallbackTitle = config?.site_name || "Detalhes do Imóvel";
+    const fallbackDesc = config?.seo?.description || "Encontre o imóvel dos seus sonhos";
     return {
-      title: "Imóvel não encontrado",
+      title: fallbackTitle,
+      description: fallbackDesc,
+      openGraph: {
+        title: fallbackTitle,
+        description: fallbackDesc,
+      },
     };
   }
-}
-
-export async function generateStaticParams() {
-  // Always include "_" as a fallback page for new properties not yet built.
-  // The Cloudflare Pages Function serves this page when a static file doesn't exist.
-  const params = [{ id: "_" }];
-  try {
-    const slugs = await fetchAllPropertySlugs();
-    for (const slug of slugs) params.push({ id: slug });
-  } catch {
-    // CDN unavailable at build time
-  }
-  return params;
 }
 
 export default async function PropertyDetailPage({ params }: PageProps) {
