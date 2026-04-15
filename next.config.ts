@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
+        hostname: "cdn.tetoz.com.br",
+      },
+      {
+        protocol: "https",
         hostname: "pub-0a21161ea37a4400b21faa6831855135.r2.dev",
       },
       {

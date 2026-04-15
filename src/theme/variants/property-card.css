@@ -2,12 +2,22 @@
 
 @layer components {
   .property-card {
+    position: relative;
+    cursor: pointer;
     background-color: var(--color-surface);
     border-radius: var(--radius-lg);
     overflow: hidden;
     transition: var(--transition-all);
     transition-duration: var(--duration-slow);
     box-shadow: var(--shadow-card);
+  }
+
+  /* Stretched link: makes entire card clickable via the detail <a> */
+  .property-card a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
   }
 
   .property-card:hover {
