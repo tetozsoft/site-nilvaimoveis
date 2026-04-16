@@ -63,6 +63,7 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
 
   const [currentImage, setCurrentImage] = useState(0);
   const [formData, setFormData] = useState({ name: "", message: "" });
+  const [shared, setShared] = useState(false);
 
   const whatsappNumber = siteConfig.contact.celular.replace(/\D/g, "");
 
@@ -102,6 +103,28 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
   const prevImage = () => setCurrentImage((prev) => (prev - 1 + property.photos.length) % property.photos.length);
 
   const locationStr = [property.endereco.bairro, property.endereco.cidade].filter(Boolean).join(", ");
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    const title = property.titulo;
+    const priceStr = property.valor_venda != null
+      ? formatCurrency(property.valor_venda)
+      : property.valor_aluguel != null
+        ? `${formatCurrency(property.valor_aluguel)}/mês`
+        : "";
+    const text = [title, locationStr, priceStr, `Código: ${property.codigo}`]
+      .filter(Boolean).join(" | ");
+
+    if (navigator.share) {
+      try { await navigator.share({ title, text, url }); } catch {}
+    } else {
+      try {
+        await navigator.clipboard.writeText(`${text}\n${url}`);
+        setShared(true);
+        setTimeout(() => setShared(false), 2000);
+      } catch {}
+    }
+  };
 
   return (
     <div className="property-detail min-h-screen">
@@ -152,8 +175,11 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
                 <button className="w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors">
                   <Heart className="w-5 h-5 text-foreground" />
                 </button>
-                <button className="w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors">
-                  <Share2 className="w-5 h-5 text-foreground" />
+                <button
+                  onClick={handleShare}
+                  className="w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors"
+                >
+                  {shared ? <Check className="w-5 h-5 text-green-500" /> : <Share2 className="w-5 h-5 text-foreground" />}
                 </button>
               </div>
             </div>
