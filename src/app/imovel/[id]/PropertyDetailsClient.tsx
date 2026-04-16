@@ -229,31 +229,39 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
                   <span className="px-3 py-1 bg-secondary text-muted-foreground text-sm font-medium rounded-full">{property.nome_condominio}</span>
                 )}
                 <span className="px-3 py-1 bg-secondary text-muted-foreground text-sm font-medium rounded-full">Cód: {property.codigo}</span>
-                <span className="px-3 py-1 bg-secondary text-muted-foreground text-sm font-medium rounded-full">Ano {property.ano_construcao}</span>
+                {property.ano_construcao > 0 && (
+                  <span className="px-3 py-1 bg-secondary text-muted-foreground text-sm font-medium rounded-full">Ano {property.ano_construcao}</span>
+                )}
               </div>
 
               {/* Cômodos */}
-              <div className="mb-10">
-                <h2 className="font-display text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <Home className="w-5 h-5 text-accent" />
-                  Cômodos
-                </h2>
-                <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
-                  {[
-                    { icon: Bed, value: property.quartos, label: "Quartos" },
-                    { icon: Bed, value: property.suites, label: "Suítes" },
-                    { icon: Bath, value: property.banheiros, label: "Banheiros" },
-                    { icon: Sofa, value: property.salas, label: "Salas" },
-                    { icon: Car, value: property.vagas_garagem, label: "Vagas" },
-                  ].map(({ icon: Icon, value, label }) => (
-                    <div key={label} className="bg-secondary rounded-xl p-4 text-center">
-                      <Icon className="w-5 h-5 mx-auto mb-2 text-accent" />
-                      <p className="text-lg font-bold text-foreground">{value}</p>
-                      <p className="text-xs text-muted-foreground">{label}</p>
+              {(() => {
+                const comodos = [
+                  { icon: Bed, value: property.quartos, label: "Quartos" },
+                  { icon: Bed, value: property.suites, label: "Suítes" },
+                  { icon: Bath, value: property.banheiros, label: "Banheiros" },
+                  { icon: Sofa, value: property.salas, label: "Salas" },
+                  { icon: Car, value: property.vagas_garagem, label: "Vagas" },
+                ].filter((item) => item.value > 0);
+                if (comodos.length === 0) return null;
+                return (
+                  <div className="mb-10">
+                    <h2 className="font-display text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+                      <Home className="w-5 h-5 text-accent" />
+                      Cômodos
+                    </h2>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                      {comodos.map(({ icon: Icon, value, label }) => (
+                        <div key={label} className="bg-secondary rounded-xl p-4 text-center">
+                          <Icon className="w-5 h-5 mx-auto mb-2 text-accent" />
+                          <p className="text-lg font-bold text-foreground">{value}</p>
+                          <p className="text-xs text-muted-foreground">{label}</p>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </div>
+                  </div>
+                );
+              })()}
 
               {/* Áreas */}
               {(() => {
@@ -282,20 +290,35 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
               })()}
 
               {/* Detalhes do Imóvel */}
-              <div className="mb-10">
-                <h2 className="font-display text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <Building className="w-5 h-5 text-accent" />
-                  Detalhes do Imóvel
-                </h2>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <InfoItem icon={Building} label="Condomínio" value={property.tem_condominio ? "Sim" : "Não"} />
-                  <InfoItem icon={Layers} label="Andares" value={String(property.andares)} />
-                  {property.andar !== undefined && (
-                    <InfoItem icon={Layers} label="Andar" value={`${property.andar}º`} />
-                  )}
-                  <InfoItem icon={Calendar} label="Ano" value={String(property.ano_construcao)} />
-                </div>
-              </div>
+              {(() => {
+                const detalhes: { icon: React.ComponentType<{ className?: string }>; label: string; value: string }[] = [];
+                if (property.tem_condominio || property.nome_condominio) {
+                  detalhes.push({ icon: Building, label: "Condomínio", value: property.nome_condominio || "Sim" });
+                }
+                if (property.andares > 0) {
+                  detalhes.push({ icon: Layers, label: "Andares", value: String(property.andares) });
+                }
+                if (property.andar != null) {
+                  detalhes.push({ icon: Layers, label: "Andar", value: `${property.andar}º` });
+                }
+                if (property.ano_construcao > 0) {
+                  detalhes.push({ icon: Calendar, label: "Ano", value: String(property.ano_construcao) });
+                }
+                if (detalhes.length === 0) return null;
+                return (
+                  <div className="mb-10">
+                    <h2 className="font-display text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+                      <Building className="w-5 h-5 text-accent" />
+                      Detalhes do Imóvel
+                    </h2>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {detalhes.map((item) => (
+                        <InfoItem key={item.label} icon={item.icon} label={item.label} value={item.value} />
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Valores */}
               <div className="mb-10">
@@ -328,21 +351,43 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
               </div>
 
               {/* Condições */}
-              <div className="mb-10">
-                <h2 className="font-display text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <Handshake className="w-5 h-5 text-accent" />
-                  Condições
-                </h2>
-                <div className="grid grid-cols-3 gap-3">
-                  <ConditionBadge label="Financiamento" active={property.aceita_financiamento} />
-                  <ConditionBadge label="Permuta" active={property.aceita_permuta} />
-                  <div className="bg-secondary rounded-xl p-4 text-center">
-                    <ArrowLeftRight className="w-5 h-5 mx-auto mb-1 text-accent" />
-                    <p className="text-xs text-muted-foreground">Mobiliado</p>
-                    <p className="text-sm font-semibold text-foreground">{property.mobiliado ? "Sim" : "Não"}</p>
+              {(() => {
+                const tipoLower = (property.tipo || "").toLowerCase();
+                const isLand = ["terreno", "chácara", "chacara", "fazenda"].includes(tipoLower);
+                const isRentOnly = property.transaction_type === "aluguel";
+
+                const items: { key: string; label: string; active: boolean; custom?: boolean }[] = [];
+                if (!isRentOnly) {
+                  items.push({ key: "fin", label: "Financiamento", active: property.aceita_financiamento });
+                }
+                items.push({ key: "per", label: "Permuta", active: property.aceita_permuta });
+                if (!isLand) {
+                  items.push({ key: "mob", label: "Mobiliado", active: property.mobiliado, custom: true });
+                }
+
+                if (items.length === 0) return null;
+                return (
+                  <div className="mb-10">
+                    <h2 className="font-display text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+                      <Handshake className="w-5 h-5 text-accent" />
+                      Condições
+                    </h2>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {items.map(({ key, label, active, custom }) =>
+                        custom ? (
+                          <div key={key} className="bg-secondary rounded-xl p-4 text-center">
+                            <ArrowLeftRight className="w-5 h-5 mx-auto mb-1 text-accent" />
+                            <p className="text-xs text-muted-foreground">{label}</p>
+                            <p className="text-sm font-semibold text-foreground">{active ? "Sim" : "Não"}</p>
+                          </div>
+                        ) : (
+                          <ConditionBadge key={key} label={label} active={active} />
+                        )
+                      )}
+                    </div>
                   </div>
-                </div>
-              </div>
+                );
+              })()}
 
               {/* Registro */}
               {(property.matricula_imovel || property.cartorio_registro) && (
