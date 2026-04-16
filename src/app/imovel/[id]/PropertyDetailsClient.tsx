@@ -104,12 +104,17 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
 
   const locationStr = [property.endereco.bairro, property.endereco.cidade].filter(Boolean).join(", ");
 
-  const copyToClipboard = (value: string) => {
+  const handleShare = async () => {
+    const url = window.location.href;
+    const title = property.titulo;
+    const text = [title, locationStr, `Código: ${property.codigo}`]
+      .filter(Boolean).join(" | ");
+
     try {
-      navigator.clipboard.writeText(value);
+      await navigator.clipboard.writeText(url);
     } catch {
       const ta = document.createElement("textarea");
-      ta.value = value;
+      ta.value = url;
       ta.style.cssText = "position:fixed;opacity:0";
       document.body.appendChild(ta);
       ta.select();
@@ -117,29 +122,7 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
       document.body.removeChild(ta);
     }
     setShared(true);
-    setTimeout(() => setShared(false), 2000);
-  };
-
-  const handleShare = async () => {
-    const url = window.location.href;
-    const title = property.titulo;
-    const priceStr = property.valor_venda != null
-      ? formatCurrency(property.valor_venda)
-      : property.valor_aluguel != null
-        ? `${formatCurrency(property.valor_aluguel)}/mês`
-        : "";
-    const text = [title, locationStr, priceStr, `Código: ${property.codigo}`]
-      .filter(Boolean).join(" | ");
-    const shareText = `${text}\n${url}`;
-
-    const isMobile = "ontouchstart" in window || navigator.maxTouchPoints > 0;
-    if (isMobile && navigator.share) {
-      try {
-        await navigator.share({ title, text, url });
-        return;
-      } catch {}
-    }
-    copyToClipboard(shareText);
+    setTimeout(() => setShared(false), 2500);
   };
 
   return (
@@ -187,16 +170,23 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
                   {property.tags[0]}
                 </span>
               )}
-              <div className="absolute bottom-4 right-4 flex gap-2">
+              <div className="absolute bottom-4 right-4 flex items-end gap-2">
                 <button className="w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors">
                   <Heart className="w-5 h-5 text-foreground" />
                 </button>
-                <button
-                  onClick={handleShare}
-                  className="w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors"
-                >
-                  {shared ? <Check className="w-5 h-5 text-green-500" /> : <Share2 className="w-5 h-5 text-foreground" />}
-                </button>
+                <div className="relative">
+                  {shared && (
+                    <span className="absolute bottom-full mb-2 right-0 whitespace-nowrap bg-foreground text-background text-xs font-medium px-3 py-1.5 rounded-lg shadow-lg">
+                      Link copiado!
+                    </span>
+                  )}
+                  <button
+                    onClick={handleShare}
+                    className="w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors"
+                  >
+                    {shared ? <Check className="w-5 h-5 text-green-500" /> : <Share2 className="w-5 h-5 text-foreground" />}
+                  </button>
+                </div>
               </div>
             </div>
 
