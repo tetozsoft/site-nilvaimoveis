@@ -104,6 +104,22 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
 
   const locationStr = [property.endereco.bairro, property.endereco.cidade].filter(Boolean).join(", ");
 
+  const copyToClipboard = (value: string) => {
+    try {
+      navigator.clipboard.writeText(value);
+    } catch {
+      const ta = document.createElement("textarea");
+      ta.value = value;
+      ta.style.cssText = "position:fixed;opacity:0";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+    }
+    setShared(true);
+    setTimeout(() => setShared(false), 2000);
+  };
+
   const handleShare = async () => {
     const url = window.location.href;
     const title = property.titulo;
@@ -114,16 +130,16 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
         : "";
     const text = [title, locationStr, priceStr, `Código: ${property.codigo}`]
       .filter(Boolean).join(" | ");
+    const shareText = `${text}\n${url}`;
 
-    if (navigator.share) {
-      try { await navigator.share({ title, text, url }); } catch {}
-    } else {
+    const isMobile = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+    if (isMobile && navigator.share) {
       try {
-        await navigator.clipboard.writeText(`${text}\n${url}`);
-        setShared(true);
-        setTimeout(() => setShared(false), 2000);
+        await navigator.share({ title, text, url });
+        return;
       } catch {}
     }
+    copyToClipboard(shareText);
   };
 
   return (
