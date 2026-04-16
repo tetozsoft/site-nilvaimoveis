@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bed, Bath, Car, Maximize, MapPin, ChevronLeft, ChevronRight, Phone, Mail, Share2, Heart, Check, Home, Building, Layers, Calendar, DollarSign, Handshake, Sofa, ArrowLeftRight, User } from "lucide-react";
+import { Bed, Bath, Car, Maximize, MapPin, ChevronLeft, ChevronRight, Phone, Mail, Share2, Check, Home, Building, Layers, Calendar, DollarSign, Handshake, Sofa, ArrowLeftRight, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -170,10 +170,7 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
                   {property.tags[0]}
                 </span>
               )}
-              <div className="absolute bottom-4 right-4 flex items-end gap-2">
-                <button className="w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors">
-                  <Heart className="w-5 h-5 text-foreground" />
-                </button>
+              <div className="absolute bottom-4 right-4">
                 <div className="relative">
                   {shared && (
                     <span className="absolute bottom-full mb-2 right-0 whitespace-nowrap bg-foreground text-background text-xs font-medium px-3 py-1.5 rounded-lg shadow-lg">
