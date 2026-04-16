@@ -5,7 +5,8 @@ import "./globals.css";
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = await fetchConfigServer().catch(() => null);
-  const siteUrl = config?.contact?.website?.replace(/\/$/, "") || "";
+  const rawUrl = config?.contact?.website?.replace(/\/$/, "") || "";
+  const siteUrl = rawUrl && !/^https?:\/\//.test(rawUrl) ? `https://${rawUrl}` : rawUrl;
   const ogImage = config?.banner?.bg_url || null;
 
   return {
