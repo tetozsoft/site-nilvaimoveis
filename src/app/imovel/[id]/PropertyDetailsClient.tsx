@@ -389,30 +389,6 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
                 );
               })()}
 
-              {/* Registro */}
-              {(property.matricula_imovel || property.cartorio_registro) && (
-                <div className="mb-10">
-                  <h2 className="font-display text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
-                    <Building className="w-5 h-5 text-accent" />
-                    Registro
-                  </h2>
-                  <div className="bg-secondary rounded-xl p-6 space-y-2">
-                    {property.matricula_imovel && (
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Matrícula</span>
-                        <span className="font-semibold text-foreground">{property.matricula_imovel}</span>
-                      </div>
-                    )}
-                    {property.cartorio_registro && (
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Cartório</span>
-                        <span className="font-semibold text-foreground">{property.cartorio_registro}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
               {/* Descrição */}
               <div className="mb-10">
                 <h2 className="font-display text-xl font-semibold text-foreground mb-4">Descrição</h2>
@@ -474,28 +450,61 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
               )}
             </div>
 
-            {/* Right: Contact Form + Corretor */}
+            {/* Right: Contact Form + Contact Card (broker or imobiliaria) */}
             <div className="lg:sticky lg:top-28 h-fit space-y-6">
-              {/* Corretor Card */}
-              <div className="property-agent bg-card rounded-2xl p-6" style={{ boxShadow: "var(--shadow-card)" }}>
-                <h3 className="font-display text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                  <User className="w-5 h-5 text-accent" />
-                  Corretor Responsável
-                </h3>
-                <div className="flex items-center gap-4">
-                  {property.corretor.avatar_url && (
-                    <img
-                      src={property.corretor.avatar_url}
-                      alt={property.corretor.nome}
-                      className="w-14 h-14 rounded-full object-cover"
-                    />
-                  )}
-                  <div>
-                    <p className="font-semibold text-foreground">{property.corretor.nome}</p>
-                    <p className="text-xs text-muted-foreground">CRECI: {property.corretor.creci}/{property.corretor.creci_estado}</p>
+              {/* Contact Card — broker when opted-in, otherwise the imobiliaria */}
+              {siteConfig.show_broker_on_website && property.corretor ? (
+                <div className="property-agent bg-card rounded-2xl p-6" style={{ boxShadow: "var(--shadow-card)" }}>
+                  <h3 className="font-display text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                    <User className="w-5 h-5 text-accent" />
+                    Corretor Responsável
+                  </h3>
+                  <div className="flex items-center gap-4">
+                    {property.corretor.avatar_url && (
+                      <img
+                        src={property.corretor.avatar_url}
+                        alt={property.corretor.nome}
+                        className="w-14 h-14 rounded-full object-cover"
+                      />
+                    )}
+                    <div>
+                      <p className="font-semibold text-foreground">{property.corretor.nome}</p>
+                      {(property.corretor.creci || property.corretor.creci_estado) && (
+                        <p className="text-xs text-muted-foreground">
+                          CRECI: {property.corretor.creci}{property.corretor.creci_estado ? `/${property.corretor.creci_estado}` : ""}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
+              ) : (
+                <div className="property-agent bg-card rounded-2xl p-6" style={{ boxShadow: "var(--shadow-card)" }}>
+                  <h3 className="font-display text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                    <Building className="w-5 h-5 text-accent" />
+                    Atendimento
+                  </h3>
+                  <div className="space-y-2 text-sm">
+                    <p className="font-semibold text-foreground">{siteConfig.company_name}</p>
+                    {siteConfig.creci && (
+                      <p className="text-xs text-muted-foreground">
+                        CRECI: {siteConfig.creci}{siteConfig.creci_estado ? `/${siteConfig.creci_estado}` : ""}
+                      </p>
+                    )}
+                    {siteConfig.contact.celular && (
+                      <p className="text-muted-foreground flex items-center gap-2">
+                        <Phone className="w-4 h-4 text-accent" />
+                        {siteConfig.contact.celular}
+                      </p>
+                    )}
+                    {siteConfig.contact.email && (
+                      <p className="text-muted-foreground flex items-center gap-2">
+                        <Mail className="w-4 h-4 text-accent" />
+                        {siteConfig.contact.email}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* Contact Form */}
               <div className="bg-card rounded-2xl p-8" style={{ boxShadow: "var(--shadow-card)" }}>

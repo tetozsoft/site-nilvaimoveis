@@ -86,21 +86,24 @@ export function fetchMeta(): Promise<MetaResponse> {
 
 // ── Server-side fetch with Next.js revalidation (for SSR/ISR) ──
 
+// Revalidation windows kept short so a republish or a contact-info change reaches
+// the live site within a minute, instead of the previous 10-minute window that
+// made operators believe the CDN was stale ("telefone antigo no site").
 export async function fetchConfigServer(): Promise<SiteConfig> {
-  const res = await fetch(cdnUrl("config.json"), { next: { revalidate: 600 } });
+  const res = await fetch(cdnUrl("config.json"), { next: { revalidate: 60 } });
   if (!res.ok) throw new Error(`CDN fetch failed: ${res.status}`);
   return res.json();
 }
 
 export async function fetchPropertyDetailServer(slug: string): Promise<PropertyDetail> {
-  const res = await fetch(cdnUrl(`imoveis/detalhe/${slug}.json`), { next: { revalidate: 600 } });
+  const res = await fetch(cdnUrl(`imoveis/detalhe/${slug}.json`), { next: { revalidate: 60 } });
   if (!res.ok) throw new Error(`CDN fetch failed: ${res.status}`);
   const raw = await res.json();
   return normalizeFeatures(raw);
 }
 
 export async function fetchMetaServer(): Promise<MetaResponse> {
-  const res = await fetch(cdnUrl("meta.json"), { next: { revalidate: 600 } });
+  const res = await fetch(cdnUrl("meta.json"), { next: { revalidate: 60 } });
   if (!res.ok) throw new Error(`CDN fetch failed: ${res.status}`);
   return res.json();
 }
@@ -109,7 +112,7 @@ export async function fetchAllPropertySlugs(): Promise<string[]> {
   const meta = await fetchMetaServer();
   const slugs: string[] = [];
   for (let page = 1; page <= meta.total_pages; page++) {
-    const res = await fetch(cdnUrl(`imoveis/listagem/page-${page}.json`), { next: { revalidate: 600 } });
+    const res = await fetch(cdnUrl(`imoveis/listagem/page-${page}.json`), { next: { revalidate: 60 } });
     if (!res.ok) continue;
     const data: ListagemResponse = await res.json();
     for (const item of data.items) {

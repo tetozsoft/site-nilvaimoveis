@@ -1,10 +1,9 @@
 // ── CDN API-aligned types ──
 
 export interface Endereco {
-  cep?: string;
+  // Sensitive fields (cep, numero, complemento) are intentionally NOT exposed
+  // on the public CDN JSON. Only neighborhood-level location is rendered.
   logradouro?: string;
-  numero?: string;
-  complemento?: string;
   bairro: string | null;
   cidade: string;
   estado: string;
@@ -77,10 +76,11 @@ export interface PropertyDetail extends PropertyCard {
   features: PropertyFeatures;
   valor_condominio: number | null;
   valor_iptu: number | null;
-  matricula_imovel: string | null;
-  cartorio_registro: string | null;
+  // Registry/notary fields removed from public payload (sensitive data).
   endereco: Endereco;
-  corretor: Corretor;
+  // Broker is now optional — the company can hide it via `show_broker_on_website`,
+  // in which case the public template falls back to the company contact info.
+  corretor: Corretor | null;
   photos: PhotoUrls[];
   videos: string[];
   meta_title: string | null;

@@ -21,6 +21,7 @@ export interface SiteConfig {
   };
   creci: string;
   creci_estado: string;
+  show_broker_on_website: boolean;
   social_links: {
     instagram: string | null;
     facebook: string | null;

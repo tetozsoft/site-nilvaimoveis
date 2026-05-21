@@ -93,10 +93,8 @@ export default async function PropertyDetailPage({ params }: PageProps) {
         "@type": "PostalAddress",
         addressLocality: property.endereco.cidade,
         addressRegion: property.endereco.estado,
-        streetAddress: property.endereco.logradouro
-          ? `${property.endereco.logradouro}${property.endereco.numero ? `, ${property.endereco.numero}` : ""}`
-          : undefined,
-        postalCode: property.endereco.cep,
+        // Sensitive: street number, complement and postal code are no longer exposed.
+        streetAddress: property.endereco.logradouro,
       },
       ...(property.valor_venda != null && {
         offers: {
