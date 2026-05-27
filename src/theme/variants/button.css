@@ -1,52 +1,30 @@
-/* ── Button Variants ── */
+/* Button Variant */
 
 @layer components {
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
+  .btn,
+  .btn-primary,
+  .btn-accent {
+    border-radius: var(--radius-sm) !important;
+    font-family: var(--font-heading);
     font-weight: var(--weight-medium);
-    transition: var(--transition-all);
-    cursor: pointer;
+    text-transform: uppercase;
   }
 
-  .btn--primary {
-    background-color: var(--color-primary);
-    color: var(--color-primary-fg);
+  .btn-primary {
+    background: var(--color-primary) !important;
+    color: hsl(0, 0%, 100%) !important;
   }
 
-  .btn--primary:hover {
-    opacity: 0.9;
+  .btn-primary:hover {
+    background: var(--color-primary-light) !important;
   }
 
-  .btn--secondary {
-    background-color: var(--color-secondary);
-    color: var(--color-text);
+  .btn-accent {
+    background: var(--color-primary) !important;
+    color: hsl(0, 0%, 100%) !important;
   }
 
-  .btn--secondary:hover {
-    background-color: var(--color-border);
-  }
-
-  .btn--outline {
-    background-color: transparent;
-    border: 1px solid var(--color-accent);
-    color: var(--color-accent);
-  }
-
-  .btn--outline:hover {
-    background-color: var(--color-accent);
-    color: var(--color-accent-fg);
-  }
-
-  .btn--accent {
-    background-image: var(--gold-gradient);
-    color: var(--color-primary-fg);
-  }
-
-  .btn--accent:hover {
-    opacity: 0.9;
-    box-shadow: var(--shadow-elegant);
+  .btn-accent:hover {
+    background: var(--color-primary-light) !important;
   }
 }

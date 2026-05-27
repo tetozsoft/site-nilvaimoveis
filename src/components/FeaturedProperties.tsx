@@ -1,30 +1,26 @@
 "use client";
 
+import { Building2, Heart, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
-import { useDestaques } from "@/hooks/use-cdn";
+import { useDestaques, useMeta } from "@/hooks/use-cdn";
 import { useSiteConfigContext } from "@/contexts/SiteConfigContext";
+import { whatsappUrl } from "@/lib/utils";
 import PropertyCardItem from "@/components/PropertyCardItem";
 
 function PropertySkeleton() {
   return (
-    <div className="rounded-2xl overflow-hidden bg-background shadow">
-      <Skeleton className="aspect-[4/3] w-full" />
-      <div className="p-6 space-y-3">
+    <div className="property-card property-card--skeleton">
+      <Skeleton className="property-card__image" />
+      <div className="property-card__middle">
+        <Skeleton className="h-4 w-16" />
         <Skeleton className="h-4 w-1/2" />
-        <Skeleton className="h-6 w-3/4" />
-        <div className="flex gap-4">
-          <Skeleton className="h-4 w-12" />
-          <Skeleton className="h-4 w-12" />
-          <Skeleton className="h-4 w-12" />
-          <Skeleton className="h-4 w-16" />
-        </div>
-        <Skeleton className="h-px w-full" />
-        <div className="flex justify-between items-center">
-          <Skeleton className="h-8 w-32" />
-          <Skeleton className="h-10 w-28" />
-        </div>
+        <Skeleton className="h-7 w-4/5" />
+        <Skeleton className="h-5 w-3/4" />
+      </div>
+      <div className="property-card__bottom">
+        <Skeleton className="h-7 w-32" />
       </div>
     </div>
   );
@@ -34,55 +30,88 @@ const FeaturedProperties = () => {
   const siteConfig = useSiteConfigContext();
   const { listing } = siteConfig;
   const { data: properties, isLoading, isError } = useDestaques();
+  const { data: meta } = useMeta();
+
+  const popularSearches = [
+    ...(meta?.cities ?? []).slice(0, 6).map((city) => ({
+      label: `Imóveis em ${city}`,
+      href: `/imoveis?cidade=${encodeURIComponent(city)}`,
+      count: null as number | null,
+    })),
+    { label: "Imóveis à venda", href: "/imoveis?transacao=venda", count: meta?.total_venda ?? null },
+    { label: "Imóveis para alugar", href: "/imoveis?transacao=aluguel", count: meta?.total_aluguel ?? null },
+  ];
 
   return (
-    <section id="imoveis" className="section-padding bg-secondary">
+    <section id="imoveis" className="featured-section section-padding">
       <div className="container-custom">
-        {/* Section Header */}
-        <div className="text-center mb-16">
-          <span className="inline-block px-4 py-2 bg-accent/10 text-accent rounded-full text-sm font-medium mb-4">
-            Imóveis em Destaque
-          </span>
-          <h2 className="section__title font-display text-3xl md:text-5xl font-bold text-foreground mb-4">
-            {listing.title.substring(0, listing.title.lastIndexOf(" "))}
-            <span className="section__highlight text-accent"> {listing.title.split(" ").pop()}</span>
+        <div className="section-heading section-heading--splendido">
+          <span>Imóveis em Destaque</span>
+          <h2>
+            {listing.title}
           </h2>
-          <p className="section__subtitle text-muted-foreground max-w-2xl mx-auto">
-            {listing.subtitle}
-          </p>
+          <p>{listing.subtitle}</p>
         </div>
 
-        {/* Loading State */}
         {isLoading && (
-          <div className="property-grid grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {Array.from({ length: 3 }).map((_, i) => (
+          <div className="property-grid">
+            {Array.from({ length: 6 }).map((_, i) => (
               <PropertySkeleton key={i} />
             ))}
           </div>
         )}
 
-        {/* Error State */}
         {isError && (
           <p className="text-center text-muted-foreground">
             Não foi possível carregar os imóveis.
           </p>
         )}
 
-        {/* Properties Grid */}
         {properties && (
-          <div className="property-grid grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="property-grid">
             {properties.map((property, index) => (
               <PropertyCardItem key={property.id} property={property} index={index} />
             ))}
           </div>
         )}
 
-        {/* View All Button */}
-        <div className="text-center mt-12">
+        <div className="featured-section__all">
           <Link href="/imoveis">
-            <Button className="btn-primary px-8 py-6 text-lg rounded-full">
-              Ver Todos os Imóveis
+            <Button className="btn-primary">
+              Ver todos os imóveis
             </Button>
+          </Link>
+        </div>
+
+        {popularSearches.length > 0 && (
+          <div className="popular-searches">
+            <h2>Buscas Populares</h2>
+            <ul>
+              {popularSearches.map((item) => (
+                <li key={item.href}>
+                  <Link href={item.href}>{item.label}</Link>
+                  {item.count != null && <span>{item.count}</span>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <div className="splendido-cta-grid">
+          <a href={whatsappUrl(siteConfig.contact.celular, "Olá, quero vender meu imóvel.")} target="_blank" rel="noopener noreferrer">
+            <Building2 className="h-8 w-8" />
+            <strong>Quer vender seu imóvel?</strong>
+            <span>Cadastre-se e anuncie conosco</span>
+          </a>
+          <a href={whatsappUrl(siteConfig.contact.celular, "Olá, não encontrei o imóvel que procuro.")} target="_blank" rel="noopener noreferrer">
+            <MessageCircle className="h-8 w-8" />
+            <strong>Não encontrou o que procurava?</strong>
+            <span>Entre em contato</span>
+          </a>
+          <Link href="/imoveis">
+            <Heart className="h-8 w-8" />
+            <strong>Meus imóveis favoritos</strong>
+            <span>Monte sua lista durante a busca</span>
           </Link>
         </div>
       </div>

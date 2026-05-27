@@ -249,10 +249,10 @@ export function usePropertyFilters(allProperties: EnrichedProperty[]) {
       if (key === "localizacao") {
         setLocationInput("");
       }
-      const next = updateSearchParams(searchParams, {
-        [key]: null,
-        pagina: null,
-      });
+      const updates: Record<string, string | null> = key === "cidade"
+        ? { cidade: null, bairro: null, pagina: null }
+        : { [key]: null, pagina: null };
+      const next = updateSearchParams(searchParams, updates);
       replaceParams(next);
     },
     [searchParams, replaceParams],

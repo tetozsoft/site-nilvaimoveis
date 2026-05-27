@@ -8,9 +8,7 @@ import { useAllProperties } from "@/hooks/use-all-properties";
 import { useAvailableFeatures } from "@/hooks/use-available-features";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CityCombobox } from "@/components/CityCombobox";
 import { BairroCombobox } from "@/components/BairroCombobox";
-import { NumberStepper } from "@/components/NumberStepper";
 import { ActiveFilterChips } from "@/components/ActiveFilterChips";
 import { SearchBarFilterModal, type SearchBarFilters } from "@/components/SearchBarFilterModal";
 
@@ -59,7 +57,7 @@ function reducer(state: SearchBarFilters, action: Action): SearchBarFilters {
     case "SELECT_CITY":
       return { ...state, cidade: action.city, bairro: "" };
     case "CLEAR_CITY":
-      return { ...EMPTY_FILTERS };
+      return { ...state, cidade: "", bairro: "" };
     case "SET_FILTER":
       return { ...state, [action.key]: action.value };
     case "REMOVE_FILTER":
@@ -81,6 +79,7 @@ function formatPrice(v: string, suffix: string): string {
 }
 
 const FILTER_DISPLAY: Record<string, (v: string) => string> = {
+  cidade: (v) => v,
   transacao: (v) => (v === "aluguel" ? "Alugar" : "Comprar"),
   quartos: (v) => `${v}+ quartos`,
   banheiros: (v) => `${v}+ banheiros`,
@@ -121,6 +120,7 @@ const FILTER_DISPLAY: Record<string, (v: string) => string> = {
 };
 
 const CHIP_KEYS: (keyof SearchBarFilters)[] = [
+  "cidade",
   "transacao",
   "bairro",
   "quartos",
@@ -179,19 +179,15 @@ export function SearchBar() {
 
   const isOnImoveis = pathname === "/imoveis";
 
-  // Initialize state from URL params (useful when on /imoveis)
   const [filters, dispatch] = useReducer(reducer, EMPTY_FILTERS, () =>
     filtersFromParams(searchParams),
   );
   const [modalOpen, setModalOpen] = useState(false);
 
-  // Sync when URL params change externally (e.g. browser back/forward)
   const paramsKey = searchParams.toString();
   useEffect(() => {
     dispatch({ type: "INIT", filters: filtersFromParams(searchParams) });
-  }, [paramsKey]);
-
-  const citySelected = !!filters.cidade;
+  }, [paramsKey, searchParams]);
 
   const navigate = useCallback(
     (f: SearchBarFilters) => {
@@ -210,9 +206,14 @@ export function SearchBar() {
     navigate(filters);
   }, [filters, navigate]);
 
-  // On /imoveis, removing a chip applies immediately
   const handleRemoveChip = useCallback(
     (key: string) => {
+      if (key === "cidade") {
+        const updated = { ...filters, cidade: "", bairro: "" };
+        dispatch({ type: "CLEAR_CITY" });
+        if (isOnImoveis) navigate(updated);
+        return;
+      }
       const updated = { ...filters, [key]: "" };
       dispatch({ type: "REMOVE_FILTER", key: key as keyof SearchBarFilters });
       if (isOnImoveis) navigate(updated);
@@ -226,9 +227,19 @@ export function SearchBar() {
   }, [isOnImoveis, navigate]);
 
   const handleClearCity = useCallback(() => {
+    const updated = { ...filters, cidade: "", bairro: "" };
     dispatch({ type: "CLEAR_CITY" });
-    if (isOnImoveis) navigate(EMPTY_FILTERS);
-  }, [isOnImoveis, navigate]);
+    if (isOnImoveis) navigate(updated);
+  }, [filters, isOnImoveis, navigate]);
+
+  const handleSelectCity = useCallback(
+    (city: string) => {
+      const updated = { ...filters, cidade: city, bairro: "" };
+      dispatch({ type: "SELECT_CITY", city });
+      if (isOnImoveis) navigate(updated);
+    },
+    [filters, isOnImoveis, navigate],
+  );
 
   const chips = useMemo(() => {
     const result: { key: string; label: string }[] = [];
@@ -242,6 +253,13 @@ export function SearchBar() {
     return result;
   }, [filters]);
 
+  const bedroomOptions = useMemo(() => {
+    const values = meta?.available_filters?.quartos ?? [];
+    const normalized = Array.from(new Set(values.filter((value) => Number.isFinite(value) && value > 0)))
+      .sort((a, b) => a - b);
+    return normalized.length > 0 ? normalized : [1, 2, 3, 4, 5];
+  }, [meta?.available_filters?.quartos]);
+
   const handleModalApply = useCallback(() => {
     setModalOpen(false);
     if (isOnImoveis) navigate(filters);
@@ -254,106 +272,92 @@ export function SearchBar() {
     if (isOnImoveis) navigate({ ...EMPTY_FILTERS, cidade });
   }, [filters.cidade, isOnImoveis, navigate]);
 
-  // On /imoveis, selecting city applies immediately
-  const handleSelectCity = useCallback(
-    (city: string) => {
-      dispatch({ type: "SELECT_CITY", city });
-      if (isOnImoveis) navigate({ ...EMPTY_FILTERS, cidade: city });
-    },
-    [isOnImoveis, navigate],
-  );
-
   if (!meta) return null;
 
   return (
-    <div className={`bg-background/95 backdrop-blur-md rounded-2xl px-5 py-4 md:px-8 md:py-5 shadow-2xl mx-auto transition-all duration-300 ${citySelected ? "max-w-4xl" : "max-w-xl"}`}>
-      {/* Step 1: City selection */}
-      {!citySelected && (
-        <CityCombobox
-          cities={meta.cities}
-          value={filters.cidade}
-          onSelect={handleSelectCity}
-        />
-      )}
+    <div className="quick-search">
+      <div className="quick-search__heading">
+        <h2>Encontre seu imóvel</h2>
+        <p>busque por cidade, bairro, dormitórios e valor</p>
+      </div>
 
-      {/* Step 2: City selected — show refinements */}
-      {citySelected && (
-        <>
-          {/* City badge */}
-          <div className="flex items-center gap-2 mb-4">
-            <Badge variant="secondary" className="gap-1 pr-1 text-sm">
-              {filters.cidade}
-              <button
-                type="button"
-                className="ml-1 rounded-full hover:bg-muted-foreground/20 p-0.5"
-                onClick={handleClearCity}
-              >
-                <X className="h-3 w-3" />
-              </button>
-            </Badge>
-          </div>
+      <div className="quick-search__grid">
+        <label className="quick-search__field">
+          <span>Tipo de busca</span>
+          <select
+            value={filters.transacao}
+            onChange={(e) => dispatch({ type: "SET_FILTER", key: "transacao", value: e.target.value })}
+          >
+            <option value="">Comprar ou Alugar</option>
+            <option value="venda">Comprar</option>
+            <option value="aluguel">Alugar</option>
+          </select>
+        </label>
 
-          {/* Refinement row */}
-          <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-end transition-all duration-300">
-            {/* Bairro combobox */}
-            <div className="flex-1">
-              <label className="block text-xs font-medium text-muted-foreground mb-1">
-                Bairro
-              </label>
-              <BairroCombobox
-                city={filters.cidade}
-                value={filters.bairro}
-                onSelect={(bairro) =>
-                  dispatch({ type: "SET_FILTER", key: "bairro", value: bairro })
-                }
-              />
-            </div>
+        <label className="quick-search__field">
+          <span>Cidade</span>
+          <select value={filters.cidade} onChange={(e) => handleSelectCity(e.target.value)}>
+            <option value="">Qualquer cidade</option>
+            {meta.cities.map((city) => (
+              <option key={city} value={city}>
+                {city}
+              </option>
+            ))}
+          </select>
+        </label>
 
-            {/* Quartos stepper */}
-            <NumberStepper
-              label="Quartos"
-              value={filters.quartos ? Number(filters.quartos) : 0}
-              min={0}
-              max={meta.available_filters.quartos.length ? Math.max(...meta.available_filters.quartos) : 10}
-              onChange={(n) =>
-                dispatch({ type: "SET_FILTER", key: "quartos", value: String(n) })
-              }
+        <div className="quick-search__field quick-search__field--bairro">
+          <span>Bairro</span>
+          {filters.cidade ? (
+            <BairroCombobox
+              city={filters.cidade}
+              value={filters.bairro}
+              onSelect={(bairro) => dispatch({ type: "SET_FILTER", key: "bairro", value: bairro })}
             />
+          ) : (
+            <div className="quick-search__disabled">Escolha a cidade</div>
+          )}
+        </div>
 
-            {/* More filters button */}
-            <div className="flex items-end">
-              <Button
-                variant="outline"
-                className="h-10 gap-2"
-                onClick={() => setModalOpen(true)}
-              >
-                <SlidersHorizontal className="h-4 w-4" />
-                <span className="hidden sm:inline">Mais filtros</span>
-              </Button>
-            </div>
+        <label className="quick-search__field quick-search__field--compact">
+          <span>Quartos</span>
+          <select
+            value={filters.quartos}
+            onChange={(e) => dispatch({ type: "SET_FILTER", key: "quartos", value: e.target.value })}
+          >
+            <option value="">Qualquer</option>
+            {bedroomOptions.map((n) => (
+              <option key={n} value={n}>
+                {n}+
+              </option>
+            ))}
+          </select>
+        </label>
 
-            {/* Search button */}
-            <div className="flex items-end">
-              <Button
-                className="btn-accent h-10 gap-2 px-6"
-                onClick={handleSearch}
-              >
-                <Search className="h-4 w-4" />
-                Buscar
-              </Button>
-            </div>
-          </div>
+        <Button type="button" variant="outline" className="quick-search__advanced" onClick={() => setModalOpen(true)}>
+          <SlidersHorizontal className="h-4 w-4" />
+          Mais filtros
+        </Button>
 
-          {/* Active filter chips */}
-          <ActiveFilterChips
-            chips={chips}
-            onRemove={handleRemoveChip}
-            onClearAll={handleClearAll}
-          />
-        </>
+        <Button type="button" className="quick-search__submit" onClick={handleSearch}>
+          <Search className="h-4 w-4" />
+          Buscar
+        </Button>
+      </div>
+
+      {filters.cidade && (
+        <div className="quick-search__city">
+          <Badge variant="secondary" className="quick-search__city-badge">
+            {filters.cidade}
+            <button type="button" onClick={handleClearCity} aria-label="Remover cidade">
+              <X className="h-3 w-3" />
+            </button>
+          </Badge>
+        </div>
       )}
 
-      {/* Filter modal */}
+      <ActiveFilterChips chips={chips} onRemove={handleRemoveChip} onClearAll={handleClearAll} />
+
       <SearchBarFilterModal
         open={modalOpen}
         onOpenChange={setModalOpen}

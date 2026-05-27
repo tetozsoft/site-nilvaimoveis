@@ -1,20 +1,18 @@
-/* ── Services Variant ── */
+/* Services Variant */
 
 @layer components {
   .services-section {
-    background-color: var(--color-primary);
-    color: var(--color-primary-fg);
+    background: var(--color-primary);
+    color: hsl(0, 0%, 100%);
   }
 
   .services-card {
-    background-color: hsl(0, 0%, 100%, 0.05);
-    border: 1px solid hsl(0, 0%, 100%, 0.1);
-    border-radius: var(--radius-2xl);
-    transition: var(--transition-all);
+    border-radius: var(--radius-sm) !important;
+    border-color: hsla(0, 0%, 100%, 0.16) !important;
+    background: hsla(0, 0%, 100%, 0.06) !important;
   }
 
   .services-card:hover {
-    background-color: hsl(0, 0%, 100%, 0.1);
-    transform: translateY(-0.25rem);
+    background: hsla(0, 0%, 100%, 0.1) !important;
   }
 }

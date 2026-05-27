@@ -1,30 +1,267 @@
-/* ── Header Variant ── */
+/* Header Variant */
 
 @layer components {
   .site-header {
-    background-color: hsl(var(--color-bg-h), var(--color-bg-s), var(--color-bg-l), 0.95);
-    border-bottom-color: var(--color-border);
+    background: var(--color-primary);
+    box-shadow: 0 2px 8px hsla(var(--color-primary-h), var(--color-primary-s), 6%, 0.18);
   }
 
-  .site-nav__link {
-    color: var(--color-text-muted);
+  .site-header__top {
+    min-height: 39px;
+    background: var(--color-primary-dark);
+    color: hsl(0, 0%, 96%);
+    font-size: var(--text-xs);
+    text-shadow: 1px 1px hsla(0, 0%, 0%, 0.35);
+  }
+
+  .site-header__top-inner,
+  .site-header__main-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .site-header__top-inner {
+    min-height: 39px;
+  }
+
+  .site-header__meta,
+  .site-header__actions,
+  .site-header__location,
+  .site-header__phone,
+  .site-header__whatsapp {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .site-header__meta {
+    margin: 0;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    color: hsl(0, 0%, 96%);
+  }
+
+  .site-header__location {
+    color: hsl(214, 28%, 78%);
+  }
+
+  .site-header__actions {
+    position: relative;
+    margin-left: auto;
+  }
+
+  .site-header__actions a,
+  .site-header__quick-trigger {
+    color: hsl(0, 0%, 96%);
+    text-decoration: none;
     transition: var(--transition-colors);
   }
 
-  .site-nav__link:hover {
+  .site-header__actions a:hover,
+  .site-header__quick-trigger:hover {
+    color: hsl(214, 78%, 72%);
+  }
+
+  .site-header__quick {
+    position: relative;
+  }
+
+  .site-header__quick-trigger {
+    min-height: 39px;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    font: inherit;
+  }
+
+  .site-header__quick-menu {
+    position: absolute;
+    top: calc(100% + 1px);
+    right: 0;
+    z-index: 20;
+    width: 13rem;
+    padding: 0.5rem 0;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-card);
+  }
+
+  .site-header__quick-menu a {
+    display: block;
+    padding: 0.65rem 0.9rem;
     color: var(--color-text);
+    text-shadow: none;
+  }
+
+  .site-header__quick-menu a:hover {
+    background: var(--color-secondary);
+    color: var(--color-primary);
+  }
+
+  .site-header__main {
+    min-height: 96px;
+    border-top: 1px solid hsla(0, 0%, 100%, 0.08);
+    background: var(--color-primary);
+  }
+
+  .site-header__main-inner {
+    min-height: 96px;
+    position: relative;
+  }
+
+  .site-header__brand {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    flex: 1 1 auto;
+    min-width: 0;
+    color: hsl(0, 0%, 100%);
+    text-decoration: none;
+  }
+
+  .site-header__logo {
+    max-width: 13rem;
+    max-height: 70px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 1px 1px hsla(0, 0%, 0%, 0.16));
+  }
+
+  .site-header__fallback-logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 4.25rem;
+    height: 4.25rem;
+    border: 1px solid hsla(0, 0%, 100%, 0.24);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-heading);
+    font-size: var(--text-3xl);
+    font-weight: var(--weight-semibold);
+  }
+
+  .site-header__brand-name {
+    max-width: 14rem;
+    overflow: hidden;
+    color: hsl(0, 0%, 100%);
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    font-weight: var(--weight-medium);
+    line-height: var(--leading-tight);
+    text-transform: uppercase;
+  }
+
+  .site-nav {
+    display: none;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.45rem;
+    background: hsl(0, 0%, 100%);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    box-shadow: 0 12px 24px hsla(var(--color-primary-h), 60%, 8%, 0.16);
+  }
+
+  .site-nav__link,
+  .site-nav__icon-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    min-height: 2.55rem;
+    padding: 0.45rem 0.95rem;
+    border-radius: var(--radius-lg);
+    color: var(--color-text);
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    font-weight: var(--weight-medium);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: var(--transition-colors);
+  }
+
+  .site-nav__link:hover,
+  .site-nav__icon-link:hover {
+    background: var(--color-primary);
+    color: hsl(0, 0%, 100%);
+  }
+
+  .site-nav__icon-link {
+    width: 2.55rem;
+    padding-inline: 0;
+  }
+
+  .site-nav__icon-link--muted {
+    color: var(--color-accent);
+    pointer-events: none;
+  }
+
+  .site-header__menu-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid hsla(0, 0%, 100%, 0.2);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: hsl(0, 0%, 100%);
   }
 
   .mobile-nav {
-    border-top-color: var(--color-border);
+    display: grid;
+    gap: 0.25rem;
+    padding: 0.75rem 1rem 1rem;
+    border-top: 1px solid hsla(0, 0%, 100%, 0.12);
+    background: var(--color-primary);
   }
 
   .mobile-nav a {
-    color: var(--color-text);
+    min-height: 44px;
+    padding: 0.75rem;
+    color: hsl(0, 0%, 100%);
+    text-decoration: none;
+    text-transform: uppercase;
     transition: var(--transition-colors);
   }
 
   .mobile-nav a:hover {
-    color: var(--color-accent);
+    background: var(--color-primary-light);
+  }
+
+  @media (max-width: 767px) {
+    .site-header__top {
+      display: none;
+    }
+
+    .site-header__main,
+    .site-header__main-inner {
+      min-height: 76px;
+    }
+
+    .site-header__brand-name {
+      display: block;
+      max-width: min(13.5rem, calc(100vw - 8rem));
+      font-size: var(--text-lg);
+      white-space: normal;
+    }
+
+    .site-header__logo {
+      max-height: 54px;
+      max-width: 6rem;
+    }
+  }
+
+  @media (min-width: 992px) {
+    .site-nav {
+      display: flex;
+    }
+
+    .site-header__menu-button {
+      display: none;
+    }
   }
 }

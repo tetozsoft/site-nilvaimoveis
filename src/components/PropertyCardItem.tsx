@@ -1,9 +1,9 @@
 "use client";
 
-import { Bed, Bath, Car, Maximize, MapPin } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Bath, Bed, Car, Heart, MapPin, Maximize } from "lucide-react";
 import Link from "next/link";
 import type { PropertyCard } from "@/data/properties";
+import { transactionTypeLabel } from "@/lib/utils";
 
 interface PropertyCardItemProps {
   property: PropertyCard;
@@ -11,76 +11,64 @@ interface PropertyCardItemProps {
 }
 
 const PropertyCardItem = ({ property, index = 0 }: PropertyCardItemProps) => {
-  const locationStr = [property.endereco.bairro, property.endereco.cidade].filter(Boolean).join(", ");
+  const locationStr = [property.endereco.cidade, property.endereco.bairro].filter(Boolean).join(" - ");
+  const propertyRef = property.id.slice(0, 4).toUpperCase();
+  const primaryTag = property.tags[0] || transactionTypeLabel(property.transaction_type);
 
   return (
-    <article
-      className="property-card group"
-      style={{ animationDelay: `${index * 100}ms` }}
-    >
-      {/* Image */}
-      <div className="property-card__image relative overflow-hidden aspect-[4/3]">
-        <img
-          src={property.photo_urls.thumb}
-          alt={property.titulo}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-          loading="lazy"
-        />
-        {property.tags.length > 0 && (
-          <span className="property-card__badge absolute top-4 left-4 px-3 py-1 bg-accent text-accent-foreground text-xs font-semibold rounded-full">
-            {property.tags[0]}
-          </span>
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-      </div>
+    <article className="property-card group" style={{ animationDelay: `${index * 80}ms` }}>
+      <Link href={`/imovel/${property.slug}`} className="property-card__main" aria-label={`Ver detalhes de ${property.titulo}`}>
+        <figure className="property-card__image">
+          <img src={property.photo_urls.thumb} alt={property.titulo} loading="lazy" />
+        </figure>
 
-      {/* Content */}
-      <div className="property-card__content p-6">
-        {locationStr && (
-          <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
-            <MapPin className="w-4 h-4 shrink-0" />
-            <span className="truncate">{locationStr}</span>
-          </div>
-        )}
+        {primaryTag && <div className="property-card__badge">{primaryTag}</div>}
 
-        <h3 className="property-card__title font-display text-xl font-semibold text-foreground mb-3 group-hover:text-accent transition-colors line-clamp-2">
-          {property.titulo}
-        </h3>
-
-        {/* Features */}
-        <div className="property-card__meta flex items-center gap-4 text-sm text-muted-foreground mb-4 pb-4 border-b border-border">
-          <span className="flex items-center gap-1">
-            <Bed className="w-4 h-4" />
-            {property.quartos}
-          </span>
-          <span className="flex items-center gap-1">
-            <Bath className="w-4 h-4" />
-            {property.banheiros}
-          </span>
-          <span className="flex items-center gap-1">
-            <Car className="w-4 h-4" />
-            {property.vagas_garagem}
-          </span>
-          {property.area_total != null && (
-            <span className="flex items-center gap-1">
-              <Maximize className="w-4 h-4" />
-              {property.area_total}m²
-            </span>
+        <div className="property-card__middle">
+          <div className="property-card__reference">#{propertyRef}</div>
+          {locationStr && (
+            <p className="property-card__location">
+              <MapPin className="h-4 w-4" />
+              {locationStr}
+            </p>
           )}
-        </div>
 
-        {/* Price & CTA */}
-        <div className="flex items-center justify-between">
-          <div>
-            <span className="text-xs text-muted-foreground">A partir de</span>
-            <p className="property-card__price text-xl font-bold text-foreground">{property.preco_formatado}</p>
+          <h3 className="property-card__title">{property.titulo}</h3>
+
+          <div className="property-card__meta">
+            {property.quartos > 0 && (
+              <span title={`${property.quartos} dormitórios`}>
+                <em>{property.quartos}</em>
+                <Bed className="h-4 w-4" />
+              </span>
+            )}
+            {property.banheiros > 0 && (
+              <span title={`${property.banheiros} banheiros`}>
+                <em>{property.banheiros}</em>
+                <Bath className="h-4 w-4" />
+              </span>
+            )}
+            {property.vagas_garagem > 0 && (
+              <span title={`${property.vagas_garagem} vagas`}>
+                <em>{property.vagas_garagem}</em>
+                <Car className="h-4 w-4" />
+              </span>
+            )}
+            {property.area_total != null && (
+              <span title={`${property.area_total}m²`}>
+                <em>{property.area_total}m²</em>
+                <Maximize className="h-4 w-4" />
+              </span>
+            )}
           </div>
-          <Link href={`/imovel/${property.slug}`}>
-            <Button variant="outline" className="border-accent text-accent hover:bg-accent hover:text-accent-foreground transition-all">
-              Ver Detalhes
-            </Button>
-          </Link>
         </div>
+      </Link>
+
+      <div className="property-card__bottom">
+        <p className="property-card__price">{property.preco_formatado}</p>
+        <span className="property-card__favorite" aria-hidden="true">
+          <Heart className="h-5 w-5" />
+        </span>
       </div>
     </article>
   );

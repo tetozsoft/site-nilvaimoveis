@@ -99,15 +99,25 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
     );
   }
 
-  const nextImage = () => setCurrentImage((prev) => (prev + 1) % property.photos.length);
-  const prevImage = () => setCurrentImage((prev) => (prev - 1 + property.photos.length) % property.photos.length);
+  const photos = property.photos.length > 0 ? property.photos : [property.photo_urls];
+  const nextImage = () => setCurrentImage((prev) => (prev + 1) % photos.length);
+  const prevImage = () => setCurrentImage((prev) => (prev - 1 + photos.length) % photos.length);
 
   const locationStr = [property.endereco.bairro, property.endereco.cidade].filter(Boolean).join(", ");
+  const propertyCodeLabel = property.codigo ? `Código: ${property.codigo}` : "";
+  const detailWhatsappMessage = [
+    `Olá, tenho interesse no imóvel "${property.titulo}".`,
+    propertyCodeLabel,
+  ].filter(Boolean).join(" ");
+  const formWhatsappMessage = [
+    `Olá, tenho interesse no imóvel "${property.titulo}"${locationStr ? ` - ${locationStr}` : ""}.`,
+    propertyCodeLabel,
+  ].filter(Boolean).join(" ");
 
   const handleShare = async () => {
     const url = window.location.href;
     const title = property.titulo;
-    const text = [title, locationStr, `Código: ${property.codigo}`]
+    const text = [title, locationStr, propertyCodeLabel]
       .filter(Boolean).join(" | ");
 
     try {
@@ -126,12 +136,12 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
   };
 
   return (
-    <div className="property-detail min-h-screen">
+    <div className="property-detail detail-shell min-h-screen">
       <Header />
 
-      <main className="pt-20">
+      <main className="detail-shell__main">
         {/* Breadcrumb */}
-        <div className="container-custom py-6">
+        <div className="container-custom detail-breadcrumb">
           <nav className="flex items-center gap-2 text-sm text-muted-foreground">
             <Link href="/" className="hover:text-foreground transition-colors">Início</Link>
             <span>/</span>
@@ -142,12 +152,12 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
         </div>
 
         {/* Image Gallery */}
-        <section className="container-custom mb-12">
-          <div className="grid lg:grid-cols-[1fr_340px] gap-4">
+        <section className="container-custom detail-gallery-wrap">
+          <div className="detail-gallery-grid">
             {/* Main Image */}
-            <div className="property-gallery relative aspect-[16/10] rounded-xl overflow-hidden group">
+            <div className="property-gallery detail-gallery-main relative aspect-[16/10] overflow-hidden group">
               <img
-                src={property.photos[currentImage]?.full}
+                src={photos[currentImage]?.full}
                 alt={`${property.titulo} - Foto ${currentImage + 1}`}
                 className="w-full h-full object-cover transition-transform duration-700"
               />
@@ -188,8 +198,8 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
             </div>
 
             {/* Thumbnails */}
-            <div className="grid grid-cols-2 lg:grid-cols-1 gap-4">
-              {property.photos.slice(0, 4).map((photo, index) => (
+            <div className="detail-gallery-thumbs">
+              {photos.slice(0, 4).map((photo, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentImage(index)}
@@ -205,10 +215,10 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
         </section>
 
         {/* Content */}
-        <section className="container-custom pb-20">
-          <div className="grid lg:grid-cols-[1fr_400px] gap-12">
+        <section className="container-custom detail-content">
+          <div className="detail-content-grid">
             {/* Left: Details */}
-            <div className="property-info">
+            <div className="detail-main-card property-info">
               {locationStr && (
                 <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
                   <MapPin className="w-4 h-4" />
@@ -228,7 +238,9 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
                 {property.tem_condominio && property.nome_condominio && (
                   <span className="px-3 py-1 bg-secondary text-muted-foreground text-sm font-medium rounded-full">{property.nome_condominio}</span>
                 )}
-                <span className="px-3 py-1 bg-secondary text-muted-foreground text-sm font-medium rounded-full">Cód: {property.codigo}</span>
+                {property.codigo && (
+                  <span className="px-3 py-1 bg-secondary text-muted-foreground text-sm font-medium rounded-full">Cód: {property.codigo}</span>
+                )}
                 {property.ano_construcao > 0 && (
                   <span className="px-3 py-1 bg-secondary text-muted-foreground text-sm font-medium rounded-full">Ano {property.ano_construcao}</span>
                 )}
@@ -277,7 +289,7 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
                       <Maximize className="w-5 h-5 text-accent" />
                       Áreas
                     </h2>
-                    <div className={`grid grid-cols-${areas.length} gap-3`}>
+                    <div className="detail-area-grid">
                       {areas.map(({ value, label }) => (
                         <div key={label} className="bg-secondary rounded-xl p-4 text-center">
                           <p className="text-lg font-bold text-foreground">{value}m²</p>
@@ -451,10 +463,31 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
             </div>
 
             {/* Right: Contact Form + Contact Card (broker or imobiliaria) */}
-            <div className="lg:sticky lg:top-28 h-fit space-y-6">
+            <div className="detail-sidebar lg:sticky lg:top-28 h-fit space-y-6">
+              <div className="detail-price-panel">
+                <p className="detail-price-panel__eyebrow">Valor do imóvel</p>
+                <strong>{property.preco_formatado}</strong>
+                <div className="detail-price-panel__labels">
+                  <span>{transactionTypeLabel(property.transaction_type)}</span>
+                  {property.aceita_permuta && <span>aceita permuta</span>}
+                  {property.aceita_financiamento && <span>aceita financiamento</span>}
+                </div>
+                <a
+                  className="detail-price-panel__whatsapp"
+                  href={whatsappUrl(siteConfig.contact.celular, detailWhatsappMessage)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Phone className="w-5 h-5" />
+                  Mais informações via WhatsApp
+                </a>
+                <p className="detail-price-panel__notice">
+                  Os preços, disponibilidades e condições poderão ser alterados sem prévia comunicação.
+                </p>
+              </div>
               {/* Contact Card — broker when opted-in, otherwise the imobiliaria */}
               {siteConfig.show_broker_on_website && property.corretor ? (
-                <div className="property-agent bg-card rounded-2xl p-6" style={{ boxShadow: "var(--shadow-card)" }}>
+                <div className="property-agent detail-contact-card bg-card rounded-2xl p-6" style={{ boxShadow: "var(--shadow-card)" }}>
                   <h3 className="font-display text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
                     <User className="w-5 h-5 text-accent" />
                     Corretor Responsável
@@ -478,7 +511,7 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
                   </div>
                 </div>
               ) : (
-                <div className="property-agent bg-card rounded-2xl p-6" style={{ boxShadow: "var(--shadow-card)" }}>
+                <div className="property-agent detail-contact-card bg-card rounded-2xl p-6" style={{ boxShadow: "var(--shadow-card)" }}>
                   <h3 className="font-display text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
                     <Building className="w-5 h-5 text-accent" />
                     Atendimento
@@ -507,7 +540,7 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
               )}
 
               {/* Contact Form */}
-              <div className="bg-card rounded-2xl p-8" style={{ boxShadow: "var(--shadow-card)" }}>
+              <div className="detail-contact-card detail-contact-card--form bg-card rounded-2xl p-8" style={{ boxShadow: "var(--shadow-card)" }}>
                 <h3 className="font-display text-xl font-semibold text-foreground mb-2">
                   Interessado neste imóvel?
                 </h3>
@@ -520,7 +553,7 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
                   onSubmit={(e) => {
                     e.preventDefault();
                     const name = formData.name.trim();
-                    const message = formData.message.trim() || `Olá, tenho interesse no imóvel "${property.titulo}"${locationStr ? ` - ${locationStr}` : ""}. Código: ${property.codigo}`;
+                    const message = formData.message.trim() || formWhatsappMessage;
                     const text = name
                       ? `Olá, meu nome é ${name}. ${message}`
                       : message;
@@ -536,7 +569,7 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
                     className="w-full px-4 py-3 bg-secondary rounded-lg border border-border text-foreground placeholder:text-muted-foreground focus:border-ring outline-none text-sm"
                   />
                   <textarea
-                    placeholder={`Olá, tenho interesse no imóvel "${property.titulo}"${locationStr ? ` - ${locationStr}` : ""}.`}
+                    placeholder={formWhatsappMessage}
                     rows={4}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}

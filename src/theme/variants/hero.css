@@ -1,21 +1,58 @@
-/* ── Hero Variant ── */
+/* Hero Variant */
 
 @layer components {
+  .hero {
+    min-height: min(720px, calc(100vh - 4rem));
+    background: var(--color-primary);
+  }
+
   .hero__overlay {
     background: var(--hero-overlay);
   }
 
+  .hero .container-custom {
+    padding-block: 3rem;
+  }
+
+  .hero .inline-block {
+    border-radius: var(--radius-sm);
+    background: hsla(var(--color-primary-h), var(--color-primary-s), 10%, 0.72);
+    color: hsl(0, 0%, 100%);
+  }
+
   .hero__title {
-    font-family: var(--font-heading);
+    max-width: 58rem;
+    margin-inline: auto;
     color: var(--color-primary-fg);
+    font-family: var(--font-heading);
+    font-size: clamp(2.35rem, 6vw, 4.5rem);
+    line-height: var(--leading-tight);
+    text-shadow: 0 2px 8px hsla(0, 0%, 0%, 0.35);
+    overflow-wrap: anywhere;
+  }
+
+  .hero__title .text-accent {
+    color: hsl(0, 0%, 100%);
   }
 
   .hero__subtitle {
-    color: hsl(0, 0%, 100%, 0.8);
+    max-width: min(100%, 40rem);
+    margin-inline: auto;
+    color: hsl(0, 0%, 92%);
+    text-shadow: 0 1px 4px hsla(0, 0%, 0%, 0.35);
+    overflow-wrap: anywhere;
+  }
+
+  .hero .quick-search {
+    max-width: 62rem;
   }
 
   .hero__stats {
     color: var(--color-primary-fg);
+  }
+
+  .hero__stats .text-accent {
+    color: hsl(214, 48%, 80%);
   }
 
   .hero__stats .stat-value {
@@ -24,6 +61,17 @@
   }
 
   .hero__stats .stat-label {
-    color: hsl(0, 0%, 100%, 0.7);
+    color: hsl(0, 0%, 100%, 0.72);
+  }
+
+  @media (max-width: 767px) {
+    .hero__title {
+      font-size: clamp(2rem, 12vw, 3.25rem);
+    }
+
+    .hero__subtitle {
+      font-size: var(--text-lg);
+      line-height: var(--leading-snug);
+    }
   }
 }

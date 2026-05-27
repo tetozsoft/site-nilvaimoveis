@@ -1,11 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@300;400;500;600;700&family=Questrial&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "../theme/index.css";
 
 @theme {
-  --font-display: "Playfair Display", serif;
-  --font-sans: "Inter", sans-serif;
+  --font-display: "Barlow Semi Condensed", Arial, sans-serif;
+  --font-sans: "Questrial", Arial, sans-serif;
 
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
@@ -149,6 +149,13 @@
     @apply border-border;
   }
 
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
     font-family: var(--font-body);
@@ -179,11 +186,18 @@
   }
 
   .section-padding {
-    @apply py-20 md:py-28 px-4 md:px-8;
+    padding: var(--space-section-y) var(--space-section-x);
   }
 
   .container-custom {
-    @apply max-w-7xl mx-auto;
+    width: min(100% - 2rem, 1170px);
+    margin-inline: auto;
+  }
+
+  @media (min-width: 768px) {
+    .section-padding {
+      padding: var(--space-section-y-md) var(--space-section-x-md);
+    }
   }
 }
 

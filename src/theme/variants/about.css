@@ -1,12 +1,26 @@
-/* ── About / Section Variant ── */
+/* About and shared section titles */
 
 @layer components {
+  .about-section {
+    background: var(--color-surface);
+  }
+
   .section__title {
-    font-family: var(--font-heading);
     color: var(--color-heading);
+    font-family: var(--font-heading);
+    line-height: var(--leading-tight);
   }
 
   .section__highlight {
     color: var(--color-accent);
+  }
+
+  .section__subtitle {
+    color: var(--color-text-muted);
+  }
+
+  .about-section img,
+  .about-section .rounded-2xl {
+    border-radius: var(--radius-sm) !important;
   }
 }

@@ -1,36 +1,29 @@
-/* ── Contact Variant ── */
+/* Contact Variant */
 
 @layer components {
   .contact-section {
-    background-color: var(--color-secondary);
+    background: var(--color-secondary);
   }
 
-  .contact-form {
-    background-color: var(--color-surface);
+  .contact-section h2 {
+    color: var(--color-heading);
+  }
+
+  .contact-form .input,
+  .contact-form input,
+  .contact-form textarea {
+    border-radius: var(--radius-sm);
     border-color: var(--color-border);
-    border-radius: var(--radius-2xl);
-    box-shadow: var(--shadow-elegant);
+    background: hsl(0, 0%, 100%);
   }
 
-  .contact-form .input {
-    background-color: var(--color-secondary);
-    border-color: var(--color-border);
-    color: var(--color-text);
-    border-radius: var(--radius-lg);
-    transition: var(--transition-all);
-  }
-
-  .contact-form .input:focus {
-    border-color: transparent;
-    box-shadow: 0 0 0 2px hsl(var(--color-primary-h), var(--color-primary-s), var(--color-primary-l));
-  }
-
-  .contact-form .input::placeholder {
-    color: var(--color-text-muted);
-    opacity: 0.6;
+  .contact-form .input:focus,
+  .contact-form input:focus,
+  .contact-form textarea:focus {
+    border-color: var(--color-primary);
   }
 
   .modal__overlay {
-    background-color: hsl(var(--color-primary-h), var(--color-primary-s), var(--color-primary-l), 0.5);
+    background: hsla(var(--color-primary-h), var(--color-primary-s), var(--color-primary-l), 0.62);
   }
 }
