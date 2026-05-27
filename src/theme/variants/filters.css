@@ -132,7 +132,7 @@
     color: hsl(0, 0%, 100%);
   }
 
-  .listing-sidebar .quick-search__heading h1,
+  .listing-sidebar .quick-search__heading h2,
   .listing-sidebar .quick-search__heading p {
     color: hsl(0, 0%, 100%);
   }

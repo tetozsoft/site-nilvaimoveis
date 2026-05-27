@@ -11,6 +11,122 @@
     background: var(--color-secondary);
   }
 
+  #financiamento-caixa.caixa-financing {
+    --caixa-blue: #005CA9;
+    --caixa-light-blue: #0075BF;
+    --caixa-orange: #F39200;
+    --caixa-ice: #D0E0E3;
+    position: relative;
+    z-index: 2;
+    margin-top: -2.75rem;
+    padding-bottom: 3.5rem;
+    background: linear-gradient(180deg, transparent 0, transparent 2.75rem, var(--color-secondary) 2.75rem);
+  }
+
+  .caixa-financing__panel {
+    box-sizing: border-box;
+    display: grid;
+    gap: 1.5rem;
+    min-width: 0;
+    padding: 1.35rem;
+    background:
+      linear-gradient(135deg, hsla(0, 0%, 100%, 0.96), hsla(192, 32%, 94%, 0.96)),
+      linear-gradient(135deg, var(--caixa-blue), var(--caixa-light-blue));
+    border: 1px solid hsla(211, 100%, 33%, 0.18);
+    border-left: 0.45rem solid var(--caixa-orange);
+    box-shadow: 0 24px 60px hsla(211, 81%, 14%, 0.22);
+  }
+
+  .caixa-financing__eyebrow,
+  .listing-caixa-banner span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    width: fit-content;
+    max-width: 100%;
+    padding: 0.3rem 0.6rem;
+    background: var(--caixa-ice, #D0E0E3);
+    color: var(--caixa-blue, #005CA9);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+  }
+
+  .caixa-financing__content h2 {
+    max-width: 48rem;
+    margin: 0.75rem 0 0;
+    color: var(--caixa-blue);
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-tight);
+    overflow-wrap: anywhere;
+  }
+
+  .caixa-financing__content p {
+    max-width: 43rem;
+    margin: 0.75rem 0 0;
+    color: var(--color-text);
+    font-size: var(--text-lg);
+    line-height: var(--leading-relaxed);
+    overflow-wrap: anywhere;
+  }
+
+  .caixa-financing__steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    margin-top: 1.25rem;
+  }
+
+  .caixa-financing__steps span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.7rem;
+    background: hsl(0, 0%, 100%);
+    border: 1px solid hsla(211, 100%, 33%, 0.14);
+    color: var(--caixa-blue);
+    font-size: var(--text-sm);
+  }
+
+  .caixa-financing__action {
+    display: grid;
+    align-content: center;
+    gap: 0.75rem;
+  }
+
+  .caixa-financing__button,
+  .listing-caixa-banner a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 3.15rem;
+    padding: 0.75rem 1rem;
+    background: var(--caixa-orange, #F39200);
+    color: hsl(0, 0%, 100%);
+    font-weight: var(--weight-semibold);
+    text-align: center;
+    text-decoration: none;
+    transition: var(--transition-all);
+    overflow-wrap: anywhere;
+  }
+
+  .caixa-financing__button:hover,
+  .listing-caixa-banner a:hover {
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+  }
+
+  .caixa-financing__action p {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--text-xs);
+    line-height: var(--leading-snug);
+  }
+
   .section-heading--splendido {
     margin: 0 auto 2rem;
     text-align: center;
@@ -202,6 +318,43 @@
     min-width: 0;
   }
 
+  .listing-caixa-banner {
+    --caixa-blue: #005CA9;
+    --caixa-light-blue: #0075BF;
+    --caixa-orange: #F39200;
+    --caixa-ice: #D0E0E3;
+    box-sizing: border-box;
+    display: grid;
+    gap: 1rem;
+    min-width: 0;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, hsl(0, 0%, 100%) 0%, var(--caixa-ice) 100%);
+    border: 1px solid hsla(211, 100%, 33%, 0.22);
+    border-left: 0.35rem solid var(--caixa-orange);
+    box-shadow: var(--shadow-elegant);
+  }
+
+  .listing-caixa-banner > div {
+    min-width: 0;
+  }
+
+  .listing-caixa-banner h2 {
+    margin: 0.55rem 0 0;
+    color: var(--caixa-blue);
+    font-family: var(--font-heading);
+    font-size: var(--text-3xl);
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-tight);
+    overflow-wrap: anywhere;
+  }
+
+  .listing-caixa-banner p {
+    margin: 0.35rem 0 0;
+    color: var(--color-text-muted);
+    overflow-wrap: anywhere;
+  }
+
   .listing-toolbar {
     display: flex;
     flex-direction: column;
@@ -388,9 +541,33 @@
       align-items: center;
       justify-content: space-between;
     }
+
+    .caixa-financing__panel,
+    .listing-caixa-banner {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+    }
+
+    .caixa-financing__panel {
+      padding: 2rem;
+    }
   }
 
   @media (max-width: 767px) {
+    .caixa-financing__panel,
+    .listing-caixa-banner {
+      width: 100%;
+    }
+
+    .caixa-financing__content h2,
+    .listing-caixa-banner h2 {
+      font-size: clamp(1.75rem, 9vw, 2.35rem);
+    }
+
+    .listing-caixa-banner a {
+      width: 100%;
+    }
+
     .listing-hero__content h1,
     .listing-hero__content p {
       overflow-wrap: anywhere;

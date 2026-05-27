@@ -188,6 +188,16 @@
     color: hsl(0, 0%, 100%);
   }
 
+  .site-nav__link--caixa {
+    background: #005CA9;
+    color: hsl(0, 0%, 100%);
+  }
+
+  .site-nav__link--caixa:hover {
+    background: #F39200;
+    color: hsl(0, 0%, 100%);
+  }
+
   .site-nav__icon-link {
     width: 2.55rem;
     padding-inline: 0;

@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { fetchConfigServer } from "@/lib/cdn";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import CaixaFinancing from "@/components/CaixaFinancing";
 import FeaturedProperties from "@/components/FeaturedProperties";
 import About from "@/components/About";
 import Services from "@/components/Services";
@@ -68,6 +69,7 @@ export default async function HomePage() {
         <div className="min-h-screen">
           <Header />
           <Hero />
+          <CaixaFinancing />
           <FeaturedProperties />
           <About />
           <Services />

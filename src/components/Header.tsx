@@ -17,6 +17,7 @@ const Header = () => {
     { label: "Início", href: "#inicio" },
     { label: "Sobre", href: "#sobre" },
     { label: "Vendas", href: "#imoveis" },
+    { label: "Financiamento CAIXA", href: "#financiamento-caixa" },
     { label: "Serviços", href: "#servicos" },
     { label: "Contato", href: "#contato" },
   ];
@@ -131,7 +132,12 @@ const Header = () => {
 
           <nav className="site-nav" aria-label="Navegação principal">
             {navLinks.map((link) => (
-              <a key={link.label} href={link.href} onClick={(e) => handleNavClick(e, link.href)} className="site-nav__link">
+              <a
+                key={link.label}
+                href={link.href}
+                onClick={(e) => handleNavClick(e, link.href)}
+                className={`site-nav__link${link.href === "#financiamento-caixa" ? " site-nav__link--caixa" : ""}`}
+              >
                 {link.href === "#inicio" && <Home className="h-4 w-4" />}
                 <span>{link.label}</span>
               </a>

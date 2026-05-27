@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bed, Bath, Car, Maximize, MapPin, ChevronLeft, ChevronRight, Phone, Mail, Share2, Check, Home, Building, Layers, Calendar, DollarSign, Handshake, Sofa, ArrowLeftRight, User } from "lucide-react";
+import { Bed, Bath, Car, Maximize, MapPin, ChevronLeft, ChevronRight, Phone, Mail, Share2, Check, Home, Building, Layers, Calendar, DollarSign, Handshake, Sofa, ArrowLeftRight, User, BadgeCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -111,6 +111,10 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
   ].filter(Boolean).join(" ");
   const formWhatsappMessage = [
     `Olá, tenho interesse no imóvel "${property.titulo}"${locationStr ? ` - ${locationStr}` : ""}.`,
+    propertyCodeLabel,
+  ].filter(Boolean).join(" ");
+  const caixaWhatsappMessage = [
+    `Olá, quero simular financiamento habitacional pela CAIXA com a Nilva Imóveis para o imóvel "${property.titulo}".`,
     propertyCodeLabel,
   ].filter(Boolean).join(" ");
 
@@ -480,6 +484,15 @@ export function PropertyDetailsClient({ slug: propSlug }: { slug: string }) {
                 >
                   <Phone className="w-5 h-5" />
                   Mais informações via WhatsApp
+                </a>
+                <a
+                  className="detail-price-panel__caixa"
+                  href={whatsappUrl(siteConfig.contact.celular, caixaWhatsappMessage)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <BadgeCheck className="w-5 h-5" />
+                  Financie este imóvel pela CAIXA
                 </a>
                 <p className="detail-price-panel__notice">
                   Os preços, disponibilidades e condições poderão ser alterados sem prévia comunicação.

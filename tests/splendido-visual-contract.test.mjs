@@ -77,4 +77,22 @@ describe("Splendido visual replica contract", () => {
     assert.match(detail, /detail-price-panel/);
     assert.match(detail, /detail-contact-card/);
   });
+
+  it("renders maximum-highlight CAIXA financing surfaces without backend changes", () => {
+    const home = read("src/app/page.tsx");
+    const hero = read("src/components/Hero.tsx");
+    const header = read("src/components/Header.tsx");
+    const listing = read("src/app/imoveis/ImoveisClient.tsx");
+    const detail = read("src/app/imovel/[id]/PropertyDetailsClient.tsx");
+    const css = read("src/theme/variants/property-grid.css");
+
+    assert.match(home, /CaixaFinancing/);
+    assert.match(hero, /hero-caixa-seal/);
+    assert.match(header, /Financiamento CAIXA/);
+    assert.match(listing, /listing-caixa-banner/);
+    assert.match(detail, /detail-price-panel__caixa/);
+    assert.match(css, /#005CA9/);
+    assert.match(css, /#F39200/);
+    assert.match(css, /#financiamento-caixa/);
+  });
 });

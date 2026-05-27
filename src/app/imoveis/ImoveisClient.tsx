@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { ChevronLeft, ChevronRight, Grid3X3, List, Search, X } from "lucide-react";
+import { BadgeCheck, Calculator, ChevronLeft, ChevronRight, Grid3X3, List, MessageCircle, Search, X } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PropertyCardItem from "@/components/PropertyCardItem";
@@ -9,6 +9,7 @@ import { SearchBar } from "@/components/SearchBar";
 import { useAllProperties } from "@/hooks/use-all-properties";
 import { usePropertyFilters } from "@/hooks/use-property-filters";
 import { useSiteConfigContext } from "@/contexts/SiteConfigContext";
+import { whatsappUrl } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -52,6 +53,8 @@ function getPageNumbers(current: number, total: number): (number | "ellipsis")[]
 
 export function ImoveisClient() {
   const siteConfig = useSiteConfigContext();
+  const caixaWhatsAppMessage =
+    "Olá, quero simular financiamento habitacional pela CAIXA com a Nilva Imóveis.";
   const { properties: allProperties, isLoading, isError, progress } =
     useAllProperties();
 
@@ -103,6 +106,26 @@ export function ImoveisClient() {
           </aside>
 
           <section className="listing-results">
+            <div className="listing-caixa-banner">
+              <div>
+                <span>
+                  <BadgeCheck className="h-4 w-4" />
+                  Correspondente CAIXA Aqui
+                </span>
+                <h2>Compre com financiamento CAIXA</h2>
+                <p>Simule, organize documentos e encaminhe sua proposta com atendimento Nilva.</p>
+              </div>
+              <a
+                href={whatsappUrl(siteConfig.contact.celular, caixaWhatsAppMessage)}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Calculator className="h-4 w-4" />
+                Simular financiamento
+                <MessageCircle className="h-4 w-4" />
+              </a>
+            </div>
+
             {isLoading && (
               <>
                 {progress > 0 && progress < 1 && (

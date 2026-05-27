@@ -39,6 +39,11 @@ const Hero = () => {
             {banner.subtitle}
           </p>
 
+          <div className="hero-caixa-seal animate-fade-up opacity-0 delay-300">
+            <span>Correspondente CAIXA Aqui • Financiamento habitacional</span>
+            <a href="#financiamento-caixa">Saiba como financiar</a>
+          </div>
+
           <SearchBar />
 
           {/* Stats */}

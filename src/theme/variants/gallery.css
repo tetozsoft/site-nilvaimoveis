@@ -65,6 +65,7 @@
   }
 
   .detail-main-card {
+    box-sizing: border-box;
     min-width: 0;
     padding: 1.25rem;
     background: var(--color-surface);
@@ -77,6 +78,7 @@
     font-size: clamp(2rem, 4vw, 3rem);
     line-height: var(--leading-tight);
     overflow-wrap: anywhere;
+    word-break: break-word;
   }
 
   .property-info h2 {
@@ -102,6 +104,7 @@
 
   .detail-price-panel,
   .detail-contact-card {
+    box-sizing: border-box;
     border-radius: var(--radius-sm);
     border: 1px solid var(--color-border);
     background: var(--color-surface);
@@ -160,6 +163,27 @@
     filter: brightness(1.08);
   }
 
+  .detail-price-panel__caixa {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    min-height: 3rem;
+    margin-top: 0.65rem;
+    padding: 0.65rem 0.9rem;
+    background: #005CA9;
+    border-bottom: 0.22rem solid #F39200;
+    color: hsl(0, 0%, 100%);
+    font-weight: var(--weight-semibold);
+    text-align: center;
+    text-decoration: none;
+    transition: var(--transition-all);
+  }
+
+  .detail-price-panel__caixa:hover {
+    background: #0075BF;
+  }
+
   .detail-price-panel__notice {
     margin: 0.85rem 0 0;
     color: var(--color-text-muted);
@@ -186,6 +210,16 @@
 
     .detail-content-grid {
       grid-template-columns: minmax(0, 1fr) 24rem;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .property-info h1 {
+      font-size: clamp(1.85rem, 9vw, 2.35rem);
+    }
+
+    .detail-price-panel__caixa {
+      flex-wrap: wrap;
     }
   }
 }
