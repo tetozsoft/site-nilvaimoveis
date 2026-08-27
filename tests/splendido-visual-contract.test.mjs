@@ -65,7 +65,7 @@ describe("Splendido visual replica contract", () => {
     assert.match(listing, /listing-shell/);
     assert.match(listing, /listing-sidebar/);
     assert.match(listing, /listing-toolbar/);
-    assert.match(card, /property-card__reference/);
+    assert.doesNotMatch(card, /property-card__reference/);
     assert.match(card, /property-card__bottom/);
   });
 
@@ -94,5 +94,22 @@ describe("Splendido visual replica contract", () => {
     assert.match(css, /#005CA9/);
     assert.match(css, /#F39200/);
     assert.match(css, /#financiamento-caixa/);
+  });
+
+  it("removes institutional, testimonial, fake reference, and total-count surfaces", () => {
+    const home = read("src/app/page.tsx");
+    const hero = read("src/components/Hero.tsx");
+    const header = read("src/components/Header.tsx");
+    const footer = read("src/components/Footer.tsx");
+    const listing = read("src/app/imoveis/ImoveisClient.tsx");
+    const card = read("src/components/PropertyCardItem.tsx");
+
+    assert.doesNotMatch(home, /<About \/>/);
+    assert.doesNotMatch(home, /<Testimonials \/>/);
+    assert.doesNotMatch(header, /href: "#sobre"/);
+    assert.doesNotMatch(footer, /href: "#sobre"/);
+    assert.doesNotMatch(hero, /hero__stats|sold_properties|satisfied_clients|years_market/);
+    assert.doesNotMatch(listing, /className="num"|totalFiltered}\s*<\/span>/);
+    assert.doesNotMatch(card, /property\.id\.slice|#[{]propertyRef[}]/);
   });
 });

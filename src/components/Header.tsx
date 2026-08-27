@@ -15,7 +15,6 @@ const Header = () => {
 
   const navLinks = [
     { label: "Início", href: "#inicio" },
-    { label: "Sobre", href: "#sobre" },
     { label: "Vendas", href: "#imoveis" },
     { label: "Financiamento CAIXA", href: "#financiamento-caixa" },
     { label: "Serviços", href: "#servicos" },

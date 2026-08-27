@@ -32,7 +32,6 @@ const Footer = () => {
   const links = [
     { label: "Início", href: "#inicio" },
     { label: "Imóveis", href: "#imoveis" },
-    { label: "Sobre", href: "#sobre" },
     { label: "Serviços", href: "#servicos" },
     { label: "Contato", href: "#contato" },
   ];

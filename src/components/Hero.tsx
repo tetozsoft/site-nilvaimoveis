@@ -5,7 +5,7 @@ import { SearchBar } from "@/components/SearchBar";
 
 const Hero = () => {
   const siteConfig = useSiteConfigContext();
-  const { banner, about } = siteConfig;
+  const { banner } = siteConfig;
 
   return (
     <section id="inicio" className="hero relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -45,26 +45,6 @@ const Hero = () => {
           </div>
 
           <SearchBar />
-
-          {/* Stats */}
-          {banner.show_stats && (
-            <div className="hero__stats flex flex-wrap justify-center gap-8 md:gap-16 mt-12 animate-fade-up opacity-0 delay-400">
-              {[
-                { value: `${about.stats.sold_properties}+`, label: "Imóveis Disponíveis" },
-                { value: `${about.stats.satisfied_clients.toLocaleString("pt-BR")}+`, label: "Clientes Satisfeitos" },
-                { value: `${about.stats.years_market}+`, label: "Anos de Experiência" },
-              ].map((stat) => (
-                <div key={stat.label} className="text-center">
-                  <div className="text-3xl md:text-4xl font-display font-bold text-accent">
-                    {stat.value}
-                  </div>
-                  <div className="text-sm text-primary-foreground/70 mt-1">
-                    {stat.label}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </div>
 

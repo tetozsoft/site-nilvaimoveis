@@ -162,8 +162,7 @@ export function ImoveisClient() {
               <>
                 <div className="listing-toolbar">
                   <div className="listing-toolbar__count">
-                    <span className="num">{totalFiltered}</span>{" "}
-                    {totalFiltered === 1 ? "imóvel encontrado" : "imóveis encontrados"}
+                    Imóveis encontrados
                   </div>
 
                   <div className="listing-toolbar__controls">

@@ -12,7 +12,6 @@ interface PropertyCardItemProps {
 
 const PropertyCardItem = ({ property, index = 0 }: PropertyCardItemProps) => {
   const locationStr = [property.endereco.cidade, property.endereco.bairro].filter(Boolean).join(" - ");
-  const propertyRef = property.id.slice(0, 4).toUpperCase();
   const primaryTag = property.tags[0] || transactionTypeLabel(property.transaction_type);
 
   return (
@@ -25,7 +24,6 @@ const PropertyCardItem = ({ property, index = 0 }: PropertyCardItemProps) => {
         {primaryTag && <div className="property-card__badge">{primaryTag}</div>}
 
         <div className="property-card__middle">
-          <div className="property-card__reference">#{propertyRef}</div>
           {locationStr && (
             <p className="property-card__location">
               <MapPin className="h-4 w-4" />
