@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { fetchConfigServer } from "@/lib/cdn";
+import { canonicalUrl, getCanonicalBaseUrl } from "@/lib/seo";
 import { ImoveisClient } from "./ImoveisClient";
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = await fetchConfigServer().catch(() => null);
+  const siteUrl = getCanonicalBaseUrl(config?.contact?.website);
 
   const title = config?.listing?.title || "Imóveis";
   const description = config
@@ -14,10 +16,13 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title,
     description,
+    alternates: {
+      canonical: canonicalUrl("/imoveis", siteUrl),
+    },
     openGraph: {
       title: config ? `${title} | ${config.site_name}` : title,
       description,
-      url: "/imoveis",
+      url: canonicalUrl("/imoveis", siteUrl),
     },
   };
 }

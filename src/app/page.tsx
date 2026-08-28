@@ -8,9 +8,11 @@ import FeaturedProperties from "@/components/FeaturedProperties";
 import Services from "@/components/Services";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
+import { canonicalUrl, getCanonicalBaseUrl } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = await fetchConfigServer().catch(() => null);
+  const siteUrl = getCanonicalBaseUrl(config?.contact?.website);
 
   const title = config?.seo?.title || config?.site_name || "Imobiliária";
   const description = config?.seo?.description || "Encontre o imóvel dos seus sonhos";
@@ -18,27 +20,40 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: { absolute: title },
     description,
+    alternates: {
+      canonical: canonicalUrl("/", siteUrl),
+    },
     openGraph: {
       title,
       description,
-      url: "/",
+      url: canonicalUrl("/", siteUrl),
     },
   };
 }
 
 export default async function HomePage() {
   const config = await fetchConfigServer().catch(() => null);
+  const siteUrl = getCanonicalBaseUrl(config?.contact?.website);
 
   // JSON-LD is built from trusted CDN config data (same origin, not user input)
   const organizationJsonLd = config
     ? {
         "@context": "https://schema.org",
         "@type": "RealEstateAgent",
+        "@id": canonicalUrl("/#imobiliaria", siteUrl),
         name: config.company_name,
-        url: config.contact.website,
+        url: canonicalUrl("/", siteUrl),
         ...(config.logo_url && { logo: config.logo_url }),
         telephone: config.contact.phone || config.contact.celular,
         email: config.contact.email,
+        areaServed: "Vargem Grande do Sul, SP",
+        contactPoint: {
+          "@type": "ContactPoint",
+          telephone: config.contact.celular || config.contact.phone,
+          contactType: "Atendimento imobiliario",
+          areaServed: "BR",
+          availableLanguage: "pt-BR",
+        },
         ...(config.contact.address && {
           address: {
             "@type": "PostalAddress",

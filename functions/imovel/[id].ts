@@ -4,12 +4,25 @@ interface Env {
   COMPANY_ID: string;
 }
 
+const CANONICAL_SITE_URL = "https://nilvaimoveis.com";
+
 function escapeAttr(str: string): string {
   return str
     .replace(/&/g, "&amp;")
     .replace(/"/g, "&quot;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
+}
+
+function getCanonicalBaseUrl(website?: string): string {
+  if (!website?.trim()) return CANONICAL_SITE_URL;
+  const raw = /^https?:\/\//i.test(website) ? website : `https://${website}`;
+  try {
+    const url = new URL(raw);
+    return url.origin.replace(/^https:\/\/www\.nilvaimoveis\.com$/i, CANONICAL_SITE_URL);
+  } catch {
+    return CANONICAL_SITE_URL;
+  }
 }
 
 export const onRequest: PagesFunction<Env> = async (context) => {
@@ -73,9 +86,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const contact = (config?.contact as Record<string, string>) || {};
   const siteName = (config?.site_name as string) || "";
   const companyName = (config?.company_name as string) || "";
-  const siteUrl = contact.website?.replace(/\/$/, "") || "";
+  const siteUrl = getCanonicalBaseUrl(contact.website);
   const endereco = (property.endereco as Record<string, string>) || {};
   const photos = (property.photos as Array<Record<string, string>>) || [];
+  const price = property.valor_venda ?? property.valor_aluguel;
 
   const title =
     (property.meta_title as string) ||
@@ -99,10 +113,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       addressLocality: endereco.cidade,
       addressRegion: endereco.estado,
     },
-    ...(property.valor_venda != null && {
+    ...(price != null && {
       offers: {
         "@type": "Offer",
-        price: property.valor_venda,
+        price,
         priceCurrency: "BRL",
         availability: "https://schema.org/InStock",
       },
@@ -112,8 +126,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     ...(config && {
       broker: {
         "@type": "RealEstateAgent",
+        "@id": `${siteUrl}/#imobiliaria`,
         name: companyName,
-        telephone: contact.phone,
+        telephone: contact.phone || contact.celular,
         email: contact.email,
       },
     }),
@@ -129,6 +144,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     `<meta property="og:url" content="${escapeAttr(pageUrl)}" />`,
     `<meta property="og:locale" content="pt_BR" />`,
     siteName ? `<meta property="og:site_name" content="${escapeAttr(siteName)}" />` : "",
+    `<link rel="canonical" href="${escapeAttr(pageUrl)}" />`,
+    `<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />`,
     `<meta name="twitter:card" content="summary_large_image" />`,
     `<meta name="twitter:title" content="${escapeAttr(title)}" />`,
     `<meta name="twitter:description" content="${escapeAttr(description)}" />`,

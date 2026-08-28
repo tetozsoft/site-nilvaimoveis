@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { fetchPropertyDetailServer, fetchConfigServer, fetchAllPropertySlugs } from "@/lib/cdn";
+import { canonicalUrl, getCanonicalBaseUrl } from "@/lib/seo";
 import { formatCurrency } from "@/lib/utils";
 import { PropertyDetailsClient } from "./PropertyDetailsClient";
 
@@ -29,22 +30,35 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       fetchPropertyDetailServer(id),
       fetchConfigServer(),
     ]);
+    const siteUrl = getCanonicalBaseUrl(config.contact.website);
+    const url = canonicalUrl(`/imovel/${encodeURIComponent(property.slug || id)}`, siteUrl);
+    const price = property.valor_venda ?? property.valor_aluguel;
 
     const title = property.meta_title || `${property.titulo} - ${config.company_name}`;
     const description =
       property.meta_description ||
-      `${property.tipo ? property.tipo + " " : ""}com ${property.quartos} quartos em ${property.endereco.cidade}. ${formatCurrency(property.valor_venda ?? property.valor_aluguel)}`;
+      [
+        property.tipo,
+        property.endereco.bairro,
+        property.endereco.cidade,
+        price != null ? formatCurrency(price) : null,
+      ]
+        .filter(Boolean)
+        .join(" - ");
 
     const ogImage = property.photos[0]?.full;
 
     return {
       title,
       description,
+      alternates: {
+        canonical: url,
+      },
       openGraph: {
         title,
         description,
         type: "website",
-        url: `/imovel/${id}`,
+        url,
         ...(ogImage && { images: [{ url: ogImage, width: 1200, height: 630, alt: property.titulo }] }),
       },
       twitter: {
@@ -79,15 +93,17 @@ export default async function PropertyDetailPage({ params }: PageProps) {
       fetchPropertyDetailServer(id),
       fetchConfigServer(),
     ]);
-
-    const locationStr = [property.endereco.bairro, property.endereco.cidade].filter(Boolean).join(", ");
+    const siteUrl = getCanonicalBaseUrl(config.contact.website);
+    const url = canonicalUrl(`/imovel/${encodeURIComponent(property.slug || id)}`, siteUrl);
+    const price = property.valor_venda ?? property.valor_aluguel;
 
     jsonLd = {
       "@context": "https://schema.org",
       "@type": "RealEstateListing",
+      "@id": `${url}#listing`,
       name: property.titulo,
       description: property.descricao,
-      url: `${config.contact.website || ""}/imovel/${property.slug}`,
+      url,
       image: property.photos.map((p) => p.full),
       address: {
         "@type": "PostalAddress",
@@ -96,10 +112,10 @@ export default async function PropertyDetailPage({ params }: PageProps) {
         // Sensitive: street number, complement and postal code are no longer exposed.
         streetAddress: property.endereco.logradouro,
       },
-      ...(property.valor_venda != null && {
+      ...(price != null && {
         offers: {
           "@type": "Offer",
-          price: property.valor_venda,
+          price,
           priceCurrency: "BRL",
           availability: "https://schema.org/InStock",
         },
@@ -111,8 +127,9 @@ export default async function PropertyDetailPage({ params }: PageProps) {
         : undefined,
       broker: {
         "@type": "RealEstateAgent",
+        "@id": canonicalUrl("/#imobiliaria", siteUrl),
         name: config.company_name,
-        telephone: config.contact.phone,
+        telephone: config.contact.phone || config.contact.celular,
         email: config.contact.email,
       },
     };

@@ -51,6 +51,12 @@ export interface MetaResponse {
   generated_at: string;
 }
 
+export interface PropertySitemapItem {
+  slug: string;
+  lastModified?: string;
+  image?: string;
+}
+
 // ── Typed fetch functions (throw on failure — React Query handles retries) ──
 
 export function fetchConfig(): Promise<SiteConfig> {
@@ -108,16 +114,29 @@ export async function fetchMetaServer(): Promise<MetaResponse> {
   return res.json();
 }
 
-export async function fetchAllPropertySlugs(): Promise<string[]> {
+export async function fetchAllPropertySitemapItems(): Promise<PropertySitemapItem[]> {
   const meta = await fetchMetaServer();
-  const slugs: string[] = [];
+  const items: PropertySitemapItem[] = [];
+  const seen = new Set<string>();
+
   for (let page = 1; page <= meta.total_pages; page++) {
     const res = await fetch(cdnUrl(`imoveis/listagem/page-${page}.json`), { next: { revalidate: 60 } });
     if (!res.ok) continue;
     const data: ListagemResponse = await res.json();
     for (const item of data.items) {
-      slugs.push(item.slug);
+      if (!item.slug || seen.has(item.slug)) continue;
+      seen.add(item.slug);
+      items.push({
+        slug: item.slug,
+        lastModified: item.publicado_em || data.generated_at || meta.generated_at,
+        image: item.photo_urls?.full || item.photo_urls?.medium || item.photo_urls?.thumb,
+      });
     }
   }
-  return slugs;
+  return items;
+}
+
+export async function fetchAllPropertySlugs(): Promise<string[]> {
+  const items = await fetchAllPropertySitemapItems();
+  return items.map((item) => item.slug);
 }
