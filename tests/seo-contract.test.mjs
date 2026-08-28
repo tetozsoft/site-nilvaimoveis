@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const root = process.cwd();
@@ -22,6 +22,7 @@ describe("SEO contract", () => {
     const cdn = read("src/lib/cdn.ts");
     const sitemap = read("src/app/sitemap.ts");
 
+    assert.match(cdn, /fetchAllPropertyCardsServer/);
     assert.match(cdn, /fetchAllPropertySitemapItems/);
     assert.match(cdn, /imoveis\/listagem\/page-\$\{page\}\.json/);
     assert.match(cdn, /photo_urls\?\.full/);
@@ -44,10 +45,14 @@ describe("SEO contract", () => {
   });
 
   it("publishes an LLM-readable site guide", () => {
-    const llms = read("public/llms.txt");
+    const llms = read("src/app/llms.txt/route.ts");
 
-    assert.match(llms, /^# Nilva Imoveis/m);
-    assert.match(llms, /https:\/\/nilvaimoveis\.com\/sitemap\.xml/);
+    assert.ok(!existsSync(join(root, "public/llms.txt")));
+    assert.match(llms, /# \$\{companyName\}/);
+    assert.match(llms, /fetchAllPropertyCardsServer/);
+    assert.match(llms, /## Catalogo De Imoveis/);
+    assert.match(llms, /properties\.map/);
+    assert.match(llms, /canonicalUrl\("\/sitemap\.xml"/);
     assert.match(llms, /Correspondente CAIXA Aqui/);
     assert.match(llms, /RealEstateListing/);
   });

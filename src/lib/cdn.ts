@@ -114,9 +114,9 @@ export async function fetchMetaServer(): Promise<MetaResponse> {
   return res.json();
 }
 
-export async function fetchAllPropertySitemapItems(): Promise<PropertySitemapItem[]> {
+export async function fetchAllPropertyCardsServer(): Promise<PropertyCard[]> {
   const meta = await fetchMetaServer();
-  const items: PropertySitemapItem[] = [];
+  const items: PropertyCard[] = [];
   const seen = new Set<string>();
 
   for (let page = 1; page <= meta.total_pages; page++) {
@@ -126,14 +126,19 @@ export async function fetchAllPropertySitemapItems(): Promise<PropertySitemapIte
     for (const item of data.items) {
       if (!item.slug || seen.has(item.slug)) continue;
       seen.add(item.slug);
-      items.push({
-        slug: item.slug,
-        lastModified: item.publicado_em || data.generated_at || meta.generated_at,
-        image: item.photo_urls?.full || item.photo_urls?.medium || item.photo_urls?.thumb,
-      });
+      items.push(item);
     }
   }
   return items;
+}
+
+export async function fetchAllPropertySitemapItems(): Promise<PropertySitemapItem[]> {
+  const items = await fetchAllPropertyCardsServer();
+  return items.map((item) => ({
+    slug: item.slug,
+    lastModified: item.publicado_em,
+    image: item.photo_urls?.full || item.photo_urls?.medium || item.photo_urls?.thumb,
+  }));
 }
 
 export async function fetchAllPropertySlugs(): Promise<string[]> {
