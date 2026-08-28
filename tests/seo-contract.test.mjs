@@ -42,4 +42,13 @@ describe("SEO contract", () => {
     assert.match(fallback, /<link rel="canonical"/);
     assert.match(fallback, /CANONICAL_SITE_URL = "https:\/\/nilvaimoveis\.com"/);
   });
+
+  it("publishes an LLM-readable site guide", () => {
+    const llms = read("public/llms.txt");
+
+    assert.match(llms, /^# Nilva Imoveis/m);
+    assert.match(llms, /https:\/\/nilvaimoveis\.com\/sitemap\.xml/);
+    assert.match(llms, /Correspondente CAIXA Aqui/);
+    assert.match(llms, /RealEstateListing/);
+  });
 });

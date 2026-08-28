@@ -1,0 +1,33 @@
+# Nilva Imoveis
+
+> Imobiliaria em Vargem Grande do Sul, SP, com imoveis para venda e aluguel e atendimento para financiamento habitacional pela CAIXA.
+
+Nilva Imoveis ajuda clientes a encontrar, comprar, vender e alugar imoveis. O site publica catalogo imobiliario, detalhes de imoveis, fotos, valores, localizacao por bairro/cidade e canais de contato via WhatsApp.
+
+Use o sitemap XML para descobrir a lista completa e atualizada de imoveis. Os dados dos imoveis sao publicados pela CDN oficial do site e podem mudar conforme novas ofertas entram ou saem do catalogo.
+
+## Paginas Principais
+
+- [Inicio](https://nilvaimoveis.com/): busca rapida, destaques, financiamento CAIXA, servicos e contato.
+- [Imoveis](https://nilvaimoveis.com/imoveis): catalogo com filtros por cidade, bairro, transacao, quartos, banheiros, vagas e faixa de preco.
+- [Financiamento CAIXA](https://nilvaimoveis.com/#financiamento-caixa): atendimento para simulacao, documentacao e encaminhamento de proposta de financiamento habitacional.
+- [Sitemap XML](https://nilvaimoveis.com/sitemap.xml): URLs canonicas de home, listagem e paginas de imoveis.
+
+## Dados Estruturados
+
+- As paginas de imovel usam JSON-LD `RealEstateListing`.
+- A home usa JSON-LD `RealEstateAgent`.
+- URLs canonicas usam `https://nilvaimoveis.com`.
+
+## Contato
+
+- Site: https://nilvaimoveis.com
+- WhatsApp: (19) 99843-4363
+- E-mail: josemarcosmerlin15@gmail.com
+- CRECI: 328907
+
+## Observacoes Para Agentes
+
+- Nao trate valores, disponibilidade ou detalhes de imoveis como permanentes.
+- Para respostas ao usuario final, prefira encaminhar para contato direto com a Nilva Imoveis quando houver duvida sobre disponibilidade, preco, financiamento ou documentacao.
+- A empresa se apresenta no site como Correspondente CAIXA Aqui; financiamento e credito dependem das regras e analise da CAIXA.
