@@ -2,7 +2,7 @@
 
 @layer components {
   .about-section {
-    background: var(--color-surface);
+    display: none !important;
   }
 
   .section__title {

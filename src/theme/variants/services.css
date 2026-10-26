@@ -1,18 +1,191 @@
-/* Services Variant */
+/* Services Variant — elegant cards on deep primary bg */
 
 @layer components {
   .services-section {
-    background: var(--color-primary);
-    color: hsl(0, 0%, 100%);
+    background:
+      radial-gradient(ellipse at top left, hsla(var(--color-accent-h), 45%, 40%, 0.18), transparent 55%),
+      radial-gradient(ellipse at bottom right, hsla(var(--color-accent-h), 60%, 35%, 0.14), transparent 60%),
+      var(--color-primary);
+    color: var(--color-primary-fg);
+    position: relative;
+    overflow: hidden;
   }
 
+  .services-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(hsla(0, 0%, 100%, 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, hsla(0, 0%, 100%, 0.025) 1px, transparent 1px);
+    background-size: 64px 64px;
+    pointer-events: none;
+    mask-image: radial-gradient(ellipse at center, hsl(0, 0%, 0%) 0%, transparent 75%);
+  }
+
+  .services-section .container-custom {
+    position: relative;
+    z-index: 1;
+  }
+
+  .services-section .section__title {
+    color: var(--color-primary-fg) !important;
+    letter-spacing: -0.02em;
+  }
+
+  .services-section .section__highlight {
+    color: var(--color-accent-light) !important;
+    font-weight: var(--weight-semibold);
+  }
+
+  /* Eyebrow pill ("Nossos Serviços") */
+  .services-section > .container-custom > .text-center > span:first-child {
+    background: hsla(0, 0%, 100%, 0.08) !important;
+    color: var(--color-accent-light) !important;
+    border: 1px solid hsla(var(--color-accent-h), 40%, 70%, 0.35);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+  }
+
+  .services-section > .container-custom > .text-center > p {
+    color: hsla(0, 0%, 100%, 0.78) !important;
+    font-size: 1.0625rem;
+    line-height: 1.65;
+  }
+
+  /* Card */
   .services-card {
-    border-radius: var(--radius-sm) !important;
-    border-color: hsla(0, 0%, 100%, 0.16) !important;
-    background: hsla(0, 0%, 100%, 0.06) !important;
+    border-radius: var(--radius-2xl) !important;
+    border: 1px solid hsla(0, 0%, 100%, 0.1) !important;
+    background:
+      linear-gradient(165deg, hsla(0, 0%, 100%, 0.08) 0%, hsla(0, 0%, 100%, 0.03) 100%) !important;
+    backdrop-filter: blur(8px);
+    position: relative;
+    overflow: hidden;
+    padding: 2.25rem 2rem !important;
+    transition:
+      transform var(--duration-base) var(--ease-default),
+      border-color var(--duration-base) var(--ease-default),
+      background var(--duration-base) var(--ease-default),
+      box-shadow var(--duration-base) var(--ease-default);
+  }
+
+  .services-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--color-accent-light), transparent);
+    opacity: 0;
+    transition: opacity var(--duration-base) var(--ease-default);
+  }
+
+  .services-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top right, hsla(var(--color-accent-h), 60%, 70%, 0.12), transparent 60%);
+    opacity: 0;
+    transition: opacity var(--duration-base) var(--ease-default);
+    pointer-events: none;
   }
 
   .services-card:hover {
-    background: hsla(0, 0%, 100%, 0.1) !important;
+    transform: translateY(-6px);
+    background:
+      linear-gradient(165deg, hsla(0, 0%, 100%, 0.13) 0%, hsla(0, 0%, 100%, 0.05) 100%) !important;
+    border-color: hsla(var(--color-accent-h), 50%, 70%, 0.45) !important;
+    box-shadow:
+      0 24px 48px -16px hsla(0, 0%, 0%, 0.4),
+      0 0 0 1px hsla(var(--color-accent-h), 50%, 70%, 0.15);
+  }
+
+  .services-card:hover::before,
+  .services-card:hover::after {
+    opacity: 1;
+  }
+
+  /* Icon container inside card */
+  .services-card > div:first-child {
+    width: 3.5rem !important;
+    height: 3.5rem !important;
+    border-radius: var(--radius-lg) !important;
+    background: linear-gradient(135deg, hsla(var(--color-accent-h), 50%, 65%, 0.22), hsla(var(--color-accent-h), 40%, 55%, 0.12)) !important;
+    border: 1px solid hsla(var(--color-accent-h), 50%, 70%, 0.3);
+    box-shadow: inset 0 1px 0 hsla(0, 0%, 100%, 0.1);
+    margin-bottom: 1.5rem !important;
+    transition: transform var(--duration-base) var(--ease-default), background var(--duration-base) var(--ease-default);
+  }
+
+  .services-card:hover > div:first-child {
+    transform: scale(1.08);
+    background: linear-gradient(135deg, var(--color-accent-light), hsl(var(--color-accent-h), 45%, 55%)) !important;
+  }
+
+  .services-card:focus-visible {
+    outline: none;
+    border-color: hsla(var(--color-accent-h), 60%, 75%, 0.9) !important;
+    box-shadow:
+      0 0 0 3px hsla(var(--color-accent-h), 55%, 72%, 0.85),
+      0 24px 48px -16px hsla(0, 0%, 0%, 0.4);
+  }
+
+  .services-card > div:first-child svg {
+    color: var(--color-accent-light) !important;
+    transition: color var(--duration-base) var(--ease-default);
+  }
+
+  .services-card:hover > div:first-child svg {
+    color: var(--color-primary-dark) !important;
+  }
+
+  /* Card title + description */
+  .services-card h3 {
+    color: var(--color-primary-fg);
+    font-size: 1.25rem;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.75rem;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+
+  .services-card p {
+    color: hsla(0, 0%, 100%, 0.78) !important;
+    line-height: 1.65;
+    font-size: 0.9375rem;
+    overflow-wrap: break-word;
+  }
+
+  /* Tighter grid gap, breathing room */
+  .services-section .grid {
+    gap: 1.5rem !important;
+  }
+
+  @media (min-width: 768px) {
+    .services-section .grid {
+      gap: 1.75rem !important;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .services-card,
+    .services-card::before,
+    .services-card::after,
+    .services-card > div:first-child,
+    .services-card > div:first-child svg {
+      transition: none !important;
+    }
+
+    .services-card:hover {
+      transform: none;
+    }
+
+    .services-card:hover > div:first-child {
+      transform: none;
+    }
   }
 }
