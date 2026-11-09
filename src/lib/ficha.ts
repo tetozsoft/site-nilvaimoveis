@@ -1,5 +1,83 @@
-// Ficha de informações do vendedor: máscaras, validação e mensagem do WhatsApp.
+// Fichas de informações do vendedor e do comprador: máscaras, validação e mensagem do WhatsApp.
 // Sem dependências de React nem de alias de import, para rodar também em node:test.
+
+export type FichaKind = "vendedor" | "comprador";
+
+/** Textos que mudam entre a ficha do vendedor e a do comprador. */
+export const FICHA_COPY: Record<
+  FichaKind,
+  {
+    path: string;
+    pageTitle: string;
+    pageDescription: string;
+    eyebrow: string;
+    title: string;
+    lead: (company: string) => string;
+    partyStepLabel: string;
+    partyTitle: string;
+    partyHint: string;
+    partyReview: string;
+    paymentStepLabel: string;
+    paymentTitle: string;
+    paymentHint: string;
+    paymentGroup: string;
+    methodsError: string;
+    holderHint: string;
+    messageTitle: string;
+    messagePartySection: string;
+    messagePaymentSection: string;
+    draftKey: string;
+  }
+> = {
+  vendedor: {
+    path: "/ficha-vendedor",
+    pageTitle: "Ficha do vendedor",
+    pageDescription:
+      "Preencha a ficha do vendedor para a elaboração do contrato de compra e venda do seu imóvel e envie pelo WhatsApp.",
+    eyebrow: "Venda de imóvel",
+    title: "Ficha do vendedor",
+    lead: (company) =>
+      `Preencha seus dados para a ${company} preparar o contrato de compra e venda. Leva cerca de cinco minutos. No fim, a ficha segue pronta para o nosso WhatsApp.`,
+    partyStepLabel: "Seus dados",
+    partyTitle: "Dados do vendedor",
+    partyHint: "Como estão nos seus documentos. Eles entram no contrato.",
+    partyReview: "Vendedor",
+    paymentStepLabel: "Recebimento",
+    paymentTitle: "Dados para recebimento",
+    paymentHint: "Onde você vai receber o valor da venda. Pix, transferência ou os dois.",
+    paymentGroup: "Como você quer receber?",
+    methodsError: "Escolha pelo menos uma forma de recebimento.",
+    holderHint: "Precisa ser o nome da pessoa ou empresa dona da conta.",
+    messageTitle: "FICHA DO VENDEDOR",
+    messagePartySection: "DADOS DO VENDEDOR",
+    messagePaymentSection: "DADOS PARA RECEBIMENTO",
+    draftKey: "nilva:ficha-vendedor:rascunho",
+  },
+  comprador: {
+    path: "/ficha-comprador",
+    pageTitle: "Ficha do comprador",
+    pageDescription:
+      "Preencha a ficha do comprador para a elaboração do contrato de compra e venda do imóvel e envie pelo WhatsApp.",
+    eyebrow: "Compra de imóvel",
+    title: "Ficha do comprador",
+    lead: (company) =>
+      `Preencha seus dados para a ${company} preparar o contrato de compra e venda. Leva cerca de cinco minutos. No fim, a ficha segue pronta para o nosso WhatsApp.`,
+    partyStepLabel: "Seus dados",
+    partyTitle: "Dados do comprador",
+    partyHint: "Como estão nos seus documentos. Eles entram no contrato.",
+    partyReview: "Comprador",
+    paymentStepLabel: "Dados bancários",
+    paymentTitle: "Dados bancários",
+    paymentHint: "Conta ou chave Pix do comprador, usada no contrato, por exemplo para devolução de valores. Pix, transferência ou os dois.",
+    paymentGroup: "Que dados você quer informar?",
+    methodsError: "Escolha pelo menos uma opção.",
+    holderHint: "Precisa ser o nome da pessoa ou empresa dona da conta.",
+    messageTitle: "FICHA DO COMPRADOR",
+    messagePartySection: "DADOS DO COMPRADOR",
+    messagePaymentSection: "DADOS BANCÁRIOS",
+    draftKey: "nilva:ficha-comprador:rascunho",
+  },
+};
 
 export type PaymentMethod = "pix" | "transferencia";
 
@@ -238,7 +316,7 @@ function required(errors: FichaErrors, data: FichaData, key: keyof FichaData) {
   if (typeof value === "string" && !value.trim()) errors[key] = REQUIRED;
 }
 
-export function validateStep(step: StepId, data: FichaData): FichaErrors {
+export function validateStep(step: StepId, data: FichaData, kind: FichaKind = "vendedor"): FichaErrors {
   const errors: FichaErrors = {};
 
   if (step === "vendedor") {
@@ -274,7 +352,7 @@ export function validateStep(step: StepId, data: FichaData): FichaErrors {
 
   if (step === "recebimento") {
     if (data.metodos.length === 0) {
-      errors.metodos = "Escolha pelo menos uma forma de recebimento.";
+      errors.metodos = FICHA_COPY[kind].methodsError;
     }
     required(errors, data, "titular");
     if (!isValidCpfOrCnpj(data.titularDocumento)) {
@@ -294,10 +372,10 @@ export function validateStep(step: StepId, data: FichaData): FichaErrors {
 }
 
 /** Valida todas as etapas ativas. Devolve a primeira etapa com erro, se houver. */
-export function findFirstInvalidStep(data: FichaData): StepId | null {
+export function findFirstInvalidStep(data: FichaData, kind: FichaKind = "vendedor"): StepId | null {
   for (const step of getSteps(data)) {
     if (step === "revisao") continue;
-    if (Object.keys(validateStep(step, data)).length > 0) return step;
+    if (Object.keys(validateStep(step, data, kind)).length > 0) return step;
   }
   return null;
 }
@@ -333,13 +411,12 @@ function joinAddress(data: FichaData): string {
   return [street, clean(data.complemento)].filter(Boolean).join(", ");
 }
 
-export function buildWhatsAppMessage(data: FichaData, now = new Date()): string {
-  const parts: string[] = [
-    "📋 *FICHA DO VENDEDOR*\n_Contrato de compra e venda de imóvel_",
-  ];
+export function buildWhatsAppMessage(data: FichaData, now = new Date(), kind: FichaKind = "vendedor"): string {
+  const copy = FICHA_COPY[kind];
+  const parts: string[] = [`📋 *${copy.messageTitle}*\n_Contrato de compra e venda de imóvel_`];
 
   parts.push(
-    block("1. DADOS DO VENDEDOR", [
+    block(`1. ${copy.messagePartySection}`, [
       ["Nome completo", data.nome],
       ["CPF", data.cpf],
       [
@@ -383,7 +460,7 @@ export function buildWhatsAppMessage(data: FichaData, now = new Date()): string 
   const usesPix = data.metodos.includes("pix");
   const usesTransfer = data.metodos.includes("transferencia");
   parts.push(
-    block(`${hasPartner(data.estadoCivil) ? "3" : "2"}. DADOS PARA RECEBIMENTO`, [
+    block(`${hasPartner(data.estadoCivil) ? "3" : "2"}. ${copy.messagePaymentSection}`, [
       ["Chave Pix", usesPix ? data.chavePix : ""],
       ["Titular da chave Pix ou da conta", data.titular],
       ["CPF / CNPJ do titular", data.titularDocumento],
