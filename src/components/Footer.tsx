@@ -37,6 +37,7 @@ const Footer = () => {
     { label: "Serviços", href: "#servicos" },
     { label: "Contato", href: "#contato" },
     { label: "Ficha do vendedor", href: "/ficha-vendedor" },
+    { label: "Ficha do comprador", href: "/ficha-comprador" },
   ];
 
   const activeSocials = Object.entries(siteConfig.social_links).filter(

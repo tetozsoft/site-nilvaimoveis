@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
   EMPTY_FICHA,
+  FICHA_COPY,
   buildWhatsAppMessage,
   findFirstInvalidStep,
   getSteps,
@@ -162,16 +163,42 @@ describe("ficha do vendedor: mensagem do WhatsApp", () => {
   });
 });
 
+describe("ficha do comprador", () => {
+  const now = new Date(2026, 10, 9);
+  const msg = buildWhatsAppMessage(base, now, "comprador");
+
+  it("troca os títulos e mantém a estrutura da ficha", () => {
+    assert.match(msg, /\*FICHA DO COMPRADOR\*/);
+    assert.match(msg, /\*1\. DADOS DO COMPRADOR\*/);
+    assert.match(msg, /\*2\. DADOS BANCÁRIOS\*/);
+    assert.match(msg, /\*Nome completo:\* Maria da Silva Santos/);
+    assert.doesNotMatch(msg, /VENDEDOR|RECEBIMENTO/);
+  });
+
+  it("numera cônjuge e dados bancários como na ficha do vendedor", () => {
+    const casado = buildWhatsAppMessage({ ...base, estadoCivil: "União estável", regimeBens: "Comunhão parcial de bens" }, now, "comprador");
+    assert.match(casado, /\*2\. DADOS DO CÔNJUGE OU COMPANHEIRO\(A\)\*/);
+    assert.match(casado, /\*3\. DADOS BANCÁRIOS\*/);
+  });
+
+  it("usa rascunhos separados para cada ficha", () => {
+    assert.notEqual(FICHA_COPY.comprador.draftKey, FICHA_COPY.vendedor.draftKey);
+    assert.equal(FICHA_COPY.comprador.path, "/ficha-comprador");
+  });
+});
+
 describe("ficha do vendedor: integração no site", () => {
   const read = (path) => readFileSync(join(process.cwd(), path), "utf8");
 
   it("fica fora dos buscadores e fora do sitemap", () => {
-    assert.match(read("src/app/ficha-vendedor/page.tsx"), /robots:\s*{\s*index:\s*false/s);
-    assert.doesNotMatch(read("src/app/sitemap.ts"), /ficha-vendedor/);
+    assert.match(read("src/components/FichaPage.tsx"), /robots:\s*{\s*index:\s*false/s);
+    assert.doesNotMatch(read("src/app/sitemap.ts"), /ficha-(vendedor|comprador)/);
   });
 
   it("tem link no cabeçalho e no rodapé", () => {
     assert.match(read("src/components/Header.tsx"), /\/ficha-vendedor/);
     assert.match(read("src/components/Footer.tsx"), /\/ficha-vendedor/);
+    assert.match(read("src/components/Header.tsx"), /\/ficha-comprador/);
+    assert.match(read("src/components/Footer.tsx"), /\/ficha-comprador/);
   });
 });

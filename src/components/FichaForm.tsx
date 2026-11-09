@@ -18,6 +18,7 @@ import { useSiteConfigContext } from "@/contexts/SiteConfigContext";
 import { whatsappUrl } from "@/lib/utils";
 import {
   EMPTY_FICHA,
+  FICHA_COPY,
   ESTADOS_CIVIS,
   REGIMES_DE_BENS,
   TIPOS_DE_CONTA,
@@ -35,37 +36,36 @@ import {
   validateStep,
   type FichaData,
   type FichaErrors,
+  type FichaKind,
   type PaymentMethod,
   type StepId,
 } from "@/lib/ficha";
 
-const DRAFT_KEY = "nilva:ficha-vendedor:rascunho";
+function stepLabels(kind: FichaKind): Record<StepId, string> {
+  const copy = FICHA_COPY[kind];
+  return {
+    vendedor: copy.partyStepLabel,
+    conjuge: "Cônjuge",
+    recebimento: copy.paymentStepLabel,
+    revisao: "Revisão",
+  };
+}
 
-const STEP_LABELS: Record<StepId, string> = {
-  vendedor: "Seus dados",
-  conjuge: "Cônjuge",
-  recebimento: "Recebimento",
-  revisao: "Revisão",
-};
-
-const STEP_TITLES: Record<StepId, { title: string; hint: string }> = {
-  vendedor: {
-    title: "Dados do vendedor",
-    hint: "Como estão nos seus documentos. Eles entram no contrato.",
-  },
-  conjuge: {
-    title: "Dados do cônjuge ou companheiro(a)",
-    hint: "Como o estado civil é casado(a) ou união estável, o contrato também leva os dados dele(a).",
-  },
-  recebimento: {
-    title: "Dados para recebimento",
-    hint: "Onde você vai receber o valor da venda. Pix, transferência ou os dois.",
-  },
-  revisao: {
-    title: "Confira e envie",
-    hint: "Veja se está tudo certo. Depois é só enviar pelo WhatsApp.",
-  },
-};
+function stepTitles(kind: FichaKind): Record<StepId, { title: string; hint: string }> {
+  const copy = FICHA_COPY[kind];
+  return {
+    vendedor: { title: copy.partyTitle, hint: copy.partyHint },
+    conjuge: {
+      title: "Dados do cônjuge ou companheiro(a)",
+      hint: "Como o estado civil é casado(a) ou união estável, o contrato também leva os dados dele(a).",
+    },
+    recebimento: { title: copy.paymentTitle, hint: copy.paymentHint },
+    revisao: {
+      title: "Confira e envie",
+      hint: "Veja se está tudo certo. Depois é só enviar pelo WhatsApp.",
+    },
+  };
+}
 
 type MaskFn = (value: string) => string;
 type Span = "full" | "half" | "third" | "two-thirds" | "five" | "two";
@@ -96,8 +96,12 @@ function renderWhatsAppPreview(message: string) {
   });
 }
 
-export function FichaVendedorClient() {
+export function FichaForm({ kind }: { kind: FichaKind }) {
   const siteConfig = useSiteConfigContext();
+  const copy = FICHA_COPY[kind];
+  const STEP_LABELS = useMemo(() => stepLabels(kind), [kind]);
+  const STEP_TITLES = useMemo(() => stepTitles(kind), [kind]);
+  const DRAFT_KEY = copy.draftKey;
   const [data, setData] = useState<FichaData>(EMPTY_FICHA);
   const [errors, setErrors] = useState<FichaErrors>({});
   const [step, setStep] = useState<StepId>("vendedor");
@@ -150,7 +154,7 @@ export function FichaVendedorClient() {
 
   const validateField = useCallback(
     (key: keyof FichaData) => {
-      const found = validateStep(step, data)[key];
+      const found = validateStep(step, data, kind)[key];
       setErrors((prev) => {
         const next = { ...prev };
         if (found) next[key] = found;
@@ -158,7 +162,7 @@ export function FichaVendedorClient() {
         return next;
       });
     },
-    [step, data],
+    [step, data, kind],
   );
 
   // ── Preenchimento automático pelo CEP ──
@@ -217,7 +221,7 @@ export function FichaVendedorClient() {
   }, []);
 
   const handleNext = () => {
-    const found = validateStep(step, data);
+    const found = validateStep(step, data, kind);
     setErrors(found);
     if (Object.keys(found).length > 0) {
       focusFirstError(found);
@@ -232,22 +236,22 @@ export function FichaVendedorClient() {
   };
 
   const handleSend = () => {
-    const invalid = findFirstInvalidStep(data);
+    const invalid = findFirstInvalidStep(data, kind);
     if (invalid) {
-      const found = validateStep(invalid, data);
+      const found = validateStep(invalid, data, kind);
       setErrors(found);
       goTo(invalid);
       focusFirstError(found);
       return;
     }
-    const found = validateStep("revisao", data);
+    const found = validateStep("revisao", data, kind);
     setErrors(found);
     if (Object.keys(found).length > 0) {
       focusFirstError(found);
       return;
     }
 
-    const text = buildWhatsAppMessage(data);
+    const text = buildWhatsAppMessage(data, new Date(), kind);
     const link = whatsappUrl(siteConfig.contact.celular, text);
     setSentText(text);
     setSentLink(link);
@@ -491,7 +495,7 @@ export function FichaVendedorClient() {
   const renderRecebimento = () => (
     <>
       <fieldset className="ficha-group">
-        <legend className="ficha-group__title">Como você quer receber?</legend>
+        <legend className="ficha-group__title">{copy.paymentGroup}</legend>
         <div className="ficha-chips" data-field="metodos" id="ficha-metodos" tabIndex={-1}>
           {(
             [
@@ -525,7 +529,7 @@ export function FichaVendedorClient() {
           {text("titular", {
             label: "Titular da chave Pix ou da conta",
             placeholder: "Nome de quem recebe",
-            hint: "Precisa ser o nome da pessoa ou empresa dona da conta.",
+            hint: copy.holderHint,
           })}
           {text("titularDocumento", {
             label: "CPF ou CNPJ do titular",
@@ -552,7 +556,7 @@ export function FichaVendedorClient() {
         <fieldset className="ficha-group">
           <legend className="ficha-group__title">Conta bancária</legend>
           <div className="ficha-grid">
-            {text("banco", { label: "Banco", placeholder: "Ex.: Caixa, Itaú, Nubank", span: "half" })}
+            {text("banco", { label: "Banco", placeholder: "Ex.: Caixa, Itaú, Nubank", span: "third" })}
             {text("agencia", { label: "Agência", inputMode: "numeric", placeholder: "0000", span: "third" })}
             {text("conta", { label: "Conta (com dígito)", placeholder: "00000-0", span: "third" })}
             <div className="ficha-field ficha-field--full">
@@ -604,13 +608,13 @@ export function FichaVendedorClient() {
       .filter(Boolean)
       .join(" · ");
 
-    const preview = buildWhatsAppMessage(data);
+    const preview = buildWhatsAppMessage(data, new Date(), kind);
 
     return (
       <>
         <section className="ficha-review" aria-labelledby="rev-vendedor">
           <header className="ficha-review__head">
-            <h3 id="rev-vendedor">Vendedor</h3>
+            <h3 id="rev-vendedor">{copy.partyReview}</h3>
             <button type="button" className="ficha-link" onClick={() => goTo("vendedor")}>
               <Pencil aria-hidden="true" /> Editar
             </button>
@@ -657,7 +661,7 @@ export function FichaVendedorClient() {
 
         <section className="ficha-review" aria-labelledby="rev-recebimento">
           <header className="ficha-review__head">
-            <h3 id="rev-recebimento">Recebimento</h3>
+            <h3 id="rev-recebimento">{copy.paymentStepLabel}</h3>
             <button type="button" className="ficha-link" onClick={() => goTo("recebimento")}>
               <Pencil aria-hidden="true" /> Editar
             </button>
@@ -712,12 +716,9 @@ export function FichaVendedorClient() {
       <main className="ficha" id="conteudo">
         <div className="container-custom ficha__inner" ref={topRef}>
           <header className="ficha__intro">
-            <p className="ficha__eyebrow">Venda de imóvel</p>
-            <h1 className="ficha__title">Ficha do vendedor</h1>
-            <p className="ficha__lead">
-              Preencha seus dados para a {siteConfig.company_name} preparar o contrato de compra e venda. Leva cerca
-              de cinco minutos. No fim, a ficha segue pronta para o nosso WhatsApp.
-            </p>
+            <p className="ficha__eyebrow">{copy.eyebrow}</p>
+            <h1 className="ficha__title">{copy.title}</h1>
+            <p className="ficha__lead">{copy.lead(siteConfig.company_name)}</p>
             <p className="ficha__privacy">
               <ShieldCheck aria-hidden="true" />
               Este site não guarda seus dados. A ficha vai direto para o WhatsApp.

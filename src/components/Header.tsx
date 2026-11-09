@@ -27,6 +27,7 @@ const Header = () => {
     { label: "Alugar", href: "/imoveis?transacao=aluguel" },
     { label: "Destaques", href: "/#imoveis" },
     { label: "Ficha do vendedor", href: "/ficha-vendedor" },
+    { label: "Ficha do comprador", href: "/ficha-comprador" },
   ];
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -172,6 +173,9 @@ const Header = () => {
             </a>
             <a href="/ficha-vendedor" onClick={(e) => handleNavClick(e, "/ficha-vendedor")}>
               Ficha do vendedor
+            </a>
+            <a href="/ficha-comprador" onClick={(e) => handleNavClick(e, "/ficha-comprador")}>
+              Ficha do comprador
             </a>
             {siteConfig.contact.celular && (
               <a href={waVisitUrl} target="_blank" rel="noopener noreferrer">
