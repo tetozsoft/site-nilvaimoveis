@@ -20,7 +20,9 @@ const Footer = () => {
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
-    if (pathname !== "/") {
+    if (href.startsWith("/")) {
+      router.push(href);
+    } else if (pathname !== "/") {
       router.push("/" + href);
     } else {
       const el = document.querySelector(href);
@@ -34,6 +36,7 @@ const Footer = () => {
     { label: "Imóveis", href: "#imoveis" },
     { label: "Serviços", href: "#servicos" },
     { label: "Contato", href: "#contato" },
+    { label: "Ficha do vendedor", href: "/ficha-vendedor" },
   ];
 
   const activeSocials = Object.entries(siteConfig.social_links).filter(
